@@ -16,6 +16,24 @@ Este projeto contém um backend em **Java com Spring Boot** e um frontend em **N
 
 ---
 
+backend/
+├── src/main/java/com/example/backend/
+│   ├── BackendApplication.java
+│   ├── FirebaseInitializer.java
+│   ├── CorsConfig.java
+│   └── controllers/
+│       └── FirebaseController.java
+└── src/main/resources/
+    └── firebase-service-account.json
+
+frontend/
+├── pages/
+│   └── index.tsx
+├── package.json
+└── next.config.js
+
+
+
 ## 📦 Backend (Spring Boot)
 
 ### ▶️ Iniciar o servidor
