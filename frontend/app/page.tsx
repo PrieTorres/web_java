@@ -1,8 +1,12 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import { Section } from "@/components/Section";
+import { PageContext } from "@/context/pageContext";
+import { LoadingSection } from "@/components/LoadingSection";
 
 export default function Home() {
+  const { } = useContext(PageContext);
   const [msg, setMsg] = useState('');
 
   useEffect(() => {
@@ -14,7 +18,13 @@ export default function Home() {
 
   return (
     <main>
-      <h1>{msg || 'Carregando...'}</h1>
+      <Section>
+        {!msg ?
+          <LoadingSection />
+          :
+          <h1>{msg}</h1>
+        }
+      </Section>
     </main>
   );
 }

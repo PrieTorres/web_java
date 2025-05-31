@@ -7,11 +7,11 @@ import { LanguageContextProvider } from "@/components/Contexts/LanguageContext";
 import '../Styles/global.css';
 import "@/i18n.js";
 
-Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Adote um animalzinho!",
-  description: "Encontre um novo amigo peludo",
+  title: "Estudos programação",
+  description: "Estude alguns tópicos de programação",
 };
 
 export default function RootLayout({
@@ -24,14 +24,14 @@ export default function RootLayout({
     <LanguageContextProvider>
       <html lang="pt-br">
         <body>
-          <Provider>
-            <Header />
-            <main>
-              {children}
-            </main>
-            <Footer />
-            <div id="default-portal"></div>
-          </Provider>
+            <Provider>
+              <Header />
+              <main>
+                {children}
+              </main>
+              <Footer />
+              <div id="default-portal"></div>
+            </Provider>
         </body>
       </html>
     </LanguageContextProvider>
