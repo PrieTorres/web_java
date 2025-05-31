@@ -3,7 +3,7 @@ import { Container } from './styles';
 import Link from "next/link";
 import Image from "next/image";
 import { useContext, useState } from "react";
-import { auth } from '@/firebase';
+// import { auth } from '@/firebase';
 import { signOut as firebaseSignOut } from 'firebase/auth';
 import { PageContext } from '@/context/pageContext';
 import defaultIcon from "@/assets/img/default_user_photo.png";

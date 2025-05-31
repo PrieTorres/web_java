@@ -7,7 +7,7 @@ import { LanguageContextProvider } from "@/components/Contexts/LanguageContext";
 import '../Styles/global.css';
 import "@/i18n.js";
 
-Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Adote um animalzinho!",
