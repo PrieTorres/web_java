@@ -1,7 +1,7 @@
 "use client";
 
 import { Section } from "@/components/Section";
-import { SignUp } from "@/components/SingUP_IN";
+import { SignUpForm } from "@/components/SignUpForm";
 import { Container } from "./styles";
 
 export default function SignInPage() {
@@ -9,7 +9,7 @@ export default function SignInPage() {
   return (
     <Container>
       <Section>
-        <SignUp />
+        <SignUpForm />
       </Section>
     </Container>
   );

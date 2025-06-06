@@ -1,4 +1,5 @@
-import { createContext, ReactNode, useMemo, useState } from "react";
+import { fetchTk } from "@/lib/helper";
+import { createContext, ReactNode, useEffect, useMemo, useState } from "react";
 
 type PageContextProps = object;
 
@@ -10,6 +11,10 @@ export const PageProvider = ({ children }: { children: ReactNode; }) => {
   const contextValue = useMemo(() => (
     { ...pageState }
   ), [pageState]);
+
+  useEffect(() => {
+    fetchTk("/api/pets")
+  }, [])
 
   return (
     <PageContext.Provider value={contextValue}>
