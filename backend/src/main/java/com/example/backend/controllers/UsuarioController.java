@@ -1,20 +1,21 @@
 package com.example.backend.controllers;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.web.bind.annotation.*;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
@@ -93,5 +94,52 @@ public class UsuarioController {
         }
 
         return ResponseEntity.ok("Login bem-sucedido.");
+    }
+
+    @GetMapping("/firebase/{uid}")
+    public ResponseEntity<Map<String, Object>> getUserByFirebaseId(@PathVariable String uid)
+            throws ExecutionException, InterruptedException {
+        ApiFuture<QuerySnapshot> future = db.collection("usuarios")
+                .whereEqualTo("firebaseUserId", uid).limit(1).get();
+        QuerySnapshot snapshot = future.get();
+
+        if (snapshot.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        DocumentSnapshot doc = snapshot.getDocuments().get(0);
+        Map<String, Object> data = doc.getData();
+        if (data == null) {
+            data = new HashMap<>();
+        }
+        data.put("id", doc.getId());
+        return ResponseEntity.ok(data);
+    }
+
+    @PostMapping("/firebase/{uid}")
+    public ResponseEntity<Map<String, Object>> createUserWithFirebaseId(@PathVariable String uid,
+            @RequestBody(required = false) Map<String, Object> userData) throws ExecutionException, InterruptedException {
+
+        ApiFuture<QuerySnapshot> future = db.collection("usuarios")
+                .whereEqualTo("firebaseUserId", uid).limit(1).get();
+        QuerySnapshot snapshot = future.get();
+        if (!snapshot.isEmpty()) {
+            DocumentSnapshot doc = snapshot.getDocuments().get(0);
+            Map<String, Object> existingData = doc.getData();
+            if (existingData == null) {
+                existingData = new HashMap<>();
+            }
+            existingData.put("id", doc.getId());
+            return ResponseEntity.ok(existingData);
+        }
+
+        if (userData == null) {
+            userData = new HashMap<>();
+        }
+        userData.put("firebaseUserId", uid);
+        DocumentReference newDoc = db.collection("usuarios").document();
+        newDoc.set(userData);
+        userData.put("id", newDoc.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(userData);
     }
 }

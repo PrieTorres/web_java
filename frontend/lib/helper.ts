@@ -35,3 +35,29 @@ export async function fetchTk(url: string, options?: object) {
     throw error;
   }
 }
+export interface GetUserByFirebaseOptions {
+  firebaseUserId: string;
+  createUser?: boolean;
+  userData?: object;
+}
+
+export async function getUserByFirebaseUserId({
+  firebaseUserId,
+  createUser = false,
+  userData,
+}: GetUserByFirebaseOptions) {
+  const baseUrl = getApiURL();
+  const url = `${baseUrl}/api/usuarios/firebase/${firebaseUserId}`;
+  const opts: RequestInit = {
+    method: createUser ? 'POST' : 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  };
+  if (createUser && userData) {
+    opts.body = JSON.stringify(userData);
+  }
+  const res = await fetch(url, opts);
+  if (!res.ok) {
+    throw new Error('Failed to fetch user');
+  }
+  return res.json();
+}

@@ -42,3 +42,8 @@ frontend/
 cd backend
 ./mvnw clean install
 ./mvnw spring-boot:run
+
+
+firebase login
+firebase init
+firebase deploy

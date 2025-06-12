@@ -1,4 +1,3 @@
-import { User } from "firebase/auth";
 import { Session } from "next-auth";
 
 export interface UserSession extends Session {
