@@ -16,11 +16,16 @@ export function isProd() {
 };
 
 export function getApiURL() {
-  return (isProd() ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL) ?? "http://localhost:3000";
+  return (isProd() ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL) ?? "http://localhost:8080";
 };
 
 export async function fetchTk(url: string, options?: object) {
   try {
+    const isCompleteUrl = url.startsWith('http://') || url.startsWith('https://');
+    if (!isCompleteUrl) {
+      url = getApiURL() + url;
+    }
+    
     const headers = {
       ...(options ?? {}),
     };

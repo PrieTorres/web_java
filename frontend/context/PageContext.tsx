@@ -74,7 +74,9 @@ export const PageProvider = ({ children }: { children: ReactNode }) => {
   }), [user]);
 
   useEffect(() => {
-    fetchTk("/api/pets");
+    fetchTk("/api/pets", {
+      method: "GET",
+    });
   }, []);
 
   return (
