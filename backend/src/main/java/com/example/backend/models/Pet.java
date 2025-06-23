@@ -44,4 +44,12 @@ public class Pet {
     public void setLocalizacao(Localizacao localizacao) {
         this.localizacao = localizacao;
     }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 }

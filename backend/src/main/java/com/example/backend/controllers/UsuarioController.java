@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
@@ -20,12 +21,15 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.firebase.cloud.FirestoreClient;
+import com.example.backend.services.TokenService;
 
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
 
     Firestore db = FirestoreClient.getFirestore();
+    @Autowired
+    private TokenService tokenService;
 
     @PostMapping("/{userId}")
     public String salvarOuAtualizarUsuario(@PathVariable String userId, @RequestBody Map<String, Object> usuario) {
@@ -63,12 +67,14 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Map<String, Object> loginData) throws ExecutionException, InterruptedException {
+    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, Object> loginData) throws ExecutionException, InterruptedException {
         String email = (String) loginData.get("email");
         String senha = (String) loginData.get("senha");
 
         if (email == null || senha == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email e senha são obrigatórios.");
+            Map<String, String> err = new HashMap<>();
+            err.put("error", "Email e senha são obrigatórios.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
         }
 
         ApiFuture<QuerySnapshot> future = db.collection("usuarios")
@@ -77,23 +83,33 @@ public class UsuarioController {
         snapshot = future.get();
 
         if (snapshot.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
+            Map<String, String> err = new HashMap<>();
+            err.put("error", "Usuário não encontrado.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
         }
 
         DocumentSnapshot userDoc = snapshot.getDocuments().get(0);
         Map<String, Object> userData = userDoc.getData();
 
         if (userData == null || !userData.containsKey("senha")) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno: senha não encontrada.");
+            Map<String, String> err = new HashMap<>();
+            err.put("error", "Erro interno: senha não encontrada.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
         }
 
         String senhaHash = (String) userData.get("senha");
 
         if (!BCrypt.checkpw(senha, senhaHash)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Senha incorreta.");
+            Map<String, String> err = new HashMap<>();
+            err.put("error", "Senha incorreta.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
         }
 
-        return ResponseEntity.ok("Login bem-sucedido.");
+        String token = tokenService.createSession(userDoc.getId());
+        Map<String, String> resp = new HashMap<>();
+        resp.put("token", token);
+        resp.put("userId", userDoc.getId());
+        return ResponseEntity.ok(resp);
     }
 
     @GetMapping("/firebase/{uid}")
