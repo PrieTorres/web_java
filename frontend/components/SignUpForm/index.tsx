@@ -66,7 +66,7 @@ export const SignUpForm = () => {
             placeholder="Insira seu nome"
             value={form.username}
             onChange={handleChange}
-            className="w-full h-12 pl-8 border-b-2 border-[#9caccb] placeholder:text-[#9caccb]"
+            className="w-full h-12 pl-8 border-b-2 border-[#9caccb] placeholder:text-[#49556d]"
           />
 
           <label className="block mt-6" htmlFor="email">Email</label>
@@ -76,7 +76,7 @@ export const SignUpForm = () => {
             placeholder="Insira seu email"
             value={form.email}
             onChange={handleChange}
-            className="w-full h-12 pl-8 border-b-2 border-[#9caccb] placeholder:text-[#9caccb]"
+            className="w-full h-12 pl-8 border-b-2 border-[#9caccb] placeholder:text-[#3b4458]"
           />
 
           <label className="block mt-6" htmlFor="password">Senha</label>
@@ -86,7 +86,7 @@ export const SignUpForm = () => {
             placeholder="Insira sua senha"
             value={form.password}
             onChange={handleChange}
-            className="w-full h-12 pl-8 border-b-2 border-[#9caccb] placeholder:text-[#9caccb]"
+            className="w-full h-12 pl-8 border-b-2 border-[#9caccb] placeholder:text-[#49556d]"
           />
 
           <label className="block mt-6" htmlFor="confirmPassword">Confirme a senha</label>
@@ -96,7 +96,7 @@ export const SignUpForm = () => {
             placeholder="Confirme sua senha"
             value={form.confirmPassword}
             onChange={handleChange}
-            className="w-full h-12 pl-8 border-b-2 border-[#9caccb] placeholder:text-[#9caccb]"
+            className="w-full h-12 pl-8 border-b-2 border-[#9caccb] placeholder:text-[#49556d]"
           />
 
           <button type="submit" className="mt-8 w-full h-12 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
