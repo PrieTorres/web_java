@@ -1,21 +1,20 @@
 export async function loginUserWithCredentials({
   email,
-  username,
   password,
 }: {
-  email?: string;
-  username?: string;
+  email: string;
   password: string;
 }) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+  const res = await fetch('/api/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, username, password }),
+    body: JSON.stringify({ email, password }),
   });
-
-  if (!response.ok) throw new Error('Login failed');
-
-  return response.json();
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text);
+  }
+  return res.text();
 }
 
 // Exemplo futuro para login com Google
