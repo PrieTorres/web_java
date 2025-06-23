@@ -1,5 +1,3 @@
-"use client";
-
 import styled, { DefaultTheme, css } from 'styled-components';
 import { SectionTypes } from '.';
 import { responsiveFontSize } from '@/styles/helper';

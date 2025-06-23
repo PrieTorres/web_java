@@ -1,5 +1,3 @@
-"use client";
-
 import styled, { DefaultTheme, css } from 'styled-components';
 import { Container as SafeImage } from '../SafeImage/styles';
 

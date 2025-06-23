@@ -95,3 +95,7 @@ export const theme: DefaultTheme = {
     default: "all .5s ease"
   }
 } as const;
+
+export const themeLight: DefaultTheme = {
+  ...theme
+} as const;

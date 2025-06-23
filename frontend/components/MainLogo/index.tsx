@@ -6,7 +6,7 @@ export const MainLogo = (): ReactElement => {
   return (
     <Container>
       <ActiveLink href="/" target="_self">
-        <h1>Estudas</h1>
+        <h1>Pets Adopt</h1>
       </ActiveLink>
     </Container>
   );

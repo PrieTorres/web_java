@@ -1,5 +1,3 @@
-"use client";
-
 import { responsiveFontSize } from "@/styles/helper";
 import styled, { css, DefaultTheme } from "styled-components";
 

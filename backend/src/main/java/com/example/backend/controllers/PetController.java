@@ -25,19 +25,14 @@ public class PetController {
 
     Firestore db = FirestoreClient.getFirestore();
 
-    @GetMapping("/")
-    public List<String> listarTodosPets() throws ExecutionException, InterruptedException {
+    @GetMapping("")
+    public List<Map<String, Object>> listarTodosPets() throws ExecutionException, InterruptedException {
         List<Map<String, Object>> pets = new ArrayList<>();
-        // ApiFuture<QuerySnapshot> future = db.collection("pets").get();
-        // for (DocumentSnapshot doc : future.get().getDocuments()) {
-        //     pets.add(doc.getData());
-        // }
-        // Retorna um array chumbado para teste
-        List<String> petsTeste = new ArrayList<>();
-        petsTeste.add("Pet 1");
-        petsTeste.add("Pet 2");
-        petsTeste.add("Pet 3");
-        return petsTeste;
+        ApiFuture<QuerySnapshot> future = db.collection("pets").get();
+        for (DocumentSnapshot doc : future.get().getDocuments()) {
+            pets.add(doc.getData());
+        }
+        return pets;
     }
 
     @GetMapping("/usuario/{userId}")

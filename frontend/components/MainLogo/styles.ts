@@ -1,11 +1,10 @@
-"use client";
 import styled, { DefaultTheme, css } from "styled-components";
 import { responsiveFontSize } from "../../styles/helper";
 
 export const Container = styled.div`
   ${({ theme }: { theme: DefaultTheme }) => css`
       color: ${theme.colors.mainColor};
-      ${responsiveFontSize(theme, "huge")}
+      ${responsiveFontSize(theme, "large")}
       max-width: 400px;
       display: flex;
       gap: 5px;
