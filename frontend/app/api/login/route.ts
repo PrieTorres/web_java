@@ -13,8 +13,8 @@ export async function POST(request: Request) {
         senha: data.password,
       }),
     });
-    const text = await res.text();
-    return new NextResponse(text, { status: res.status });
+    const json = await res.json();
+    return NextResponse.json(json, { status: res.status });
   } catch (err) {
     console.error('Erro ao processar login:', err);
     return new NextResponse('Erro interno', { status: 500 });
