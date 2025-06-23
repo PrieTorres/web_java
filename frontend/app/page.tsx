@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useContext } from 'react';
 import { Section } from "@/components/Section";
-import { PageContext } from "@/context/pageContext";
+import { PageContext } from "@/context/PageContext";
 import { LoadingSection } from "@/components/LoadingSection";
 import { fetchTk } from '@/lib/helper';
 

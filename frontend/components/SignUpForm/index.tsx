@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useContext, FormEvent, ChangeEvent } from "react";
-import { PageContext } from "@/context/pageContext";
+import { PageContext } from "@/context/PageContext";
 import { getUserByFirebaseUserId } from "@/lib/helper";
 import { LoadingSpin } from "@/components/LoadingSpin";
 import { signInWithGoogle, auth } from "@/lib/firebase";

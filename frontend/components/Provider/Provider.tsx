@@ -6,7 +6,7 @@ import { theme, themeLight } from "@/styles/theme";
 import { GlobalStyles } from "@/styles/globalStyles";
 import StyledComponentsRegistry from '@/lib/registry';
 import useI18n from '@/hooks/useI18n';
-import { PageProvider } from '@/context/pageContext';
+import { PageProvider } from '@/context/PageContext';
 import { DefaultTheme } from 'styled-components';
 
 interface ThemeContextType {
