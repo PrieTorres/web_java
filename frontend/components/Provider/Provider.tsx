@@ -2,12 +2,12 @@
 import { createContext, ReactElement, ReactNode, useContext, useEffect, useState } from 'react';
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "styled-components";
-import { theme } from "@/Styles/theme";
-import { GlobalStyles } from "@/Styles/globalStyles";
+import { theme, themeLight } from "@/styles/theme";
+import { GlobalStyles } from "@/styles/globalStyles";
 import StyledComponentsRegistry from '@/lib/registry';
 import useI18n from '@/hooks/useI18n';
 import { PageProvider } from '@/context/pageContext';
-import { DefaultTheme } from 'styled-components/dist/types';
+import { DefaultTheme } from 'styled-components';
 
 interface ThemeContextType {
   isLight: boolean;
@@ -24,22 +24,22 @@ export const useThemeContext = () => {
   return context;
 };
 
-export const Provider = ({ children, session }: { children: ReactNode, session?: any; }): ReactElement => {
+export const Provider = ({ children, session }: { children: ReactNode, session?: never; }): ReactElement => {
   useI18n();
-  const [mounted, setMounted] = useState(false);
+  // const [mounted, setMounted] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<DefaultTheme>(theme);
 
   const [isLight, setIsLight] = useState<boolean>(false);
 
+  // useEffect(() => {
+  //   setMounted(true);
+  //   const savedTheme = localStorage.getItem("IsLight");
+  //   if (savedTheme) {
+  //     setIsLight(JSON.parse(savedTheme));
+  //   }
+  // }, []);
   useEffect(() => {
-    setMounted(true);
-    const savedTheme = localStorage.getItem("IsLight");
-    if (savedTheme) {
-      setIsLight(JSON.parse(savedTheme));
-    }
-  }, []);
-  useEffect(() => {
-    setCurrentTheme(isLight ? {} : theme);
+    setCurrentTheme(isLight ? themeLight : theme);
   }, [isLight]);
 
 

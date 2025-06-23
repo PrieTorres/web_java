@@ -2,7 +2,7 @@
 
 import { useState, useContext, FormEvent, ChangeEvent } from "react";
 import { PageContext } from "@/context/pageContext";
-import { fetchTk, getUserByFirebaseUserId } from "@/lib/helper";
+import { getUserByFirebaseUserId } from "@/lib/helper";
 import { LoadingSpin } from "@/components/LoadingSpin";
 import { signInWithGoogle, auth } from "@/lib/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";

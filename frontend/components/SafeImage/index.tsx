@@ -1,12 +1,9 @@
 "use client";
-import { use, useEffect, useState } from "react";
+import { useState } from "react";
 import { Container } from "./styles";
 import Image, { StaticImageData } from "next/image";
 import { TranslatedSpan } from "../TranslatedSpan";
-import { ThemeProvider } from "styled-components";
 import { useThemeContext } from "../Provider/Provider";
-
-
 
 export interface SafeImageProps {
   src: string | StaticImageData,

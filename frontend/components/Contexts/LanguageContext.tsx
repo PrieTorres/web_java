@@ -47,7 +47,7 @@ export const LanguageContextProvider = ({ children }: { children: ReactNode; }) 
     } else {
       document.documentElement.lang = i18n.language;
     }
-  }, [i18n.language]);
+  }, []);
 
   const { t } = useTranslation();
 

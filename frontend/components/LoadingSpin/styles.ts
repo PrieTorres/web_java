@@ -5,7 +5,7 @@ export const Container = styled.div`
   ${({ theme }: { theme: DefaultTheme }) => css`
     width: 48px;
     height: 48px;
-    border: 5px solid #FFF;
+    border: 5px solid ${theme.colors.white ?? '#ffffff'};
     border-bottom-color: transparent;
     border-radius: 50%;
     display: inline-block;

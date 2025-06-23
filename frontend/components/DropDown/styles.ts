@@ -3,6 +3,7 @@ import styled, { DefaultTheme, css } from 'styled-components';
 
 interface ContainerProps {
   height?: number;
+  theme: DefaultTheme;
 }
 
 export const Container = styled.div<ContainerProps>`

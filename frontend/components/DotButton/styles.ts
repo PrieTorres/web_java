@@ -5,6 +5,7 @@ import { ButtonHTMLAttributes } from 'react';
 import styled, { DefaultTheme, css } from 'styled-components';
 
 interface ContainerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  theme: DefaultTheme;
   selected?: boolean;
 }
 

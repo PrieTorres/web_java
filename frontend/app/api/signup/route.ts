@@ -17,6 +17,7 @@ export async function POST(request: Request) {
     const text = await res.text();
     return new NextResponse(text, { status: res.status });
   } catch (err) {
+    console.error('Erro ao processar cadastro:', err);
     return new NextResponse('Erro interno', { status: 500 });
   }
 }

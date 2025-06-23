@@ -9,7 +9,7 @@ type ClientPortalInterface = {
   selector?: string;
 };
 
-const ClientPortal = ({ children, selector = "default-portal", show }: ClientPortalInterface) => {
+const ClientPortal = ({ children, selector = "default-portal" }: ClientPortalInterface) => {
   const ref = useRef<Element | null>(null);
   useEffect(() => {
     ref.current = document.getElementById(selector);

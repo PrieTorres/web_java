@@ -1,6 +1,6 @@
 import { MenuLinkProps } from "../MenuLink";
 import { NavLinks } from "../NavLinks";
-import { Container } from "./Styles";
+import { Container } from "./styles";
 
 export const Menu = () => {
   const menuTabs: MenuLinkProps[] = [
