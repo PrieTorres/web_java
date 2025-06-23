@@ -2,8 +2,8 @@
 import { createContext, ReactElement, ReactNode, useContext, useEffect, useState } from 'react';
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "styled-components";
-import { theme } from "@/Styles/theme";
-import { GlobalStyles } from "@/Styles/globalStyles";
+import { theme } from "@/styles/theme";
+import { GlobalStyles } from "@/styles/globalStyles";
 import StyledComponentsRegistry from '@/lib/registry';
 import useI18n from '@/hooks/useI18n';
 import { PageProvider } from '@/context/pageContext';

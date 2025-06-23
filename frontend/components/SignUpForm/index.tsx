@@ -26,12 +26,18 @@ export const SignUpForm = () => {
 
     setLoading(true);
     try {
-      const response = await fetchTk("/api/user", {
+      const response = await fetch("/api/signup", {
         method: "POST",
-        body: JSON.stringify({ username: form.username, email: form.email, password: form.password }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: form.username,
+          email: form.email,
+          password: form.password,
+        }),
       });
-      const userData = await response.json();
-      updateSessionId?.(userData?._id ?? "");
+      const text = await response.text();
+      if (!response.ok) throw new Error(text);
+      updateSessionId?.(text);
     } catch (error) {
       console.error("Erro ao criar usuário:", error);
     } finally {
@@ -109,8 +115,8 @@ export const SignUpForm = () => {
           </div>
 
           <p className="text-center text-sm mt-4">
-            Já tem uma conta?{" "}
-            <Link href="/sign-in" className="text-blue-700 hover:underline">
+            Já tem uma conta?{' '}
+            <Link href="/login" className="text-blue-700 hover:underline">
               Faça login
             </Link>
           </p>

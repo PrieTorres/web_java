@@ -9,7 +9,7 @@ import { Container } from './styles';
 
 export const LoginForm = () => {
   const router = useRouter();
-  const [form, setForm] = useState({ username: '', email: '', password: '' });
+  const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,16 +18,14 @@ export const LoginForm = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!form.password || (!form.email && !form.username)) {
-      return alert('Preencha email ou nome de usuário e a senha.');
+    if (!form.email || !form.password) {
+      return alert('Preencha email e senha.');
     }
 
     setLoading(true);
     try {
-      const user = await loginUserWithCredentials(form);
-      if (user?.id) {
-        router.push('/');
-      }
+      await loginUserWithCredentials(form);
+      router.push('/');
     } catch (err) {
       console.error("handleSubmit", err);
       alert('Erro ao fazer login');
@@ -54,15 +52,6 @@ export const LoginForm = () => {
         <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <input
-            type="text"
-            name="username"
-            placeholder="Nome de usuário"
-            value={form.username}
-            onChange={handleChange}
-            className="input"
-          />
-
           <input
             type="email"
             name="email"
