@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       }),
     });
     const json = await res.json();
-    return new NextResponse(json, { status: res.status });
+    return NextResponse.json(json, { status: res.status });
   } catch (err) {
     console.error('Erro ao processar login:', err);
     return new NextResponse('Erro interno', { status: 500 });

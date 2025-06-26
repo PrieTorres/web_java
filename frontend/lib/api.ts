@@ -14,7 +14,7 @@ export async function loginUserWithCredentials({
     const text = await res.text();
     throw new Error(text);
   }
-  return res.text();
+  return res.json();
 }
 
 // Exemplo futuro para login com Google

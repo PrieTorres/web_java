@@ -1,16 +1,18 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent, useState, useContext } from 'react';
 import Image from 'next/image';
 import googleImage from '@/assets/google.svg';
 import { useRouter } from 'next/navigation';
-import { loginUserWithCredentials, loginUserWithGoogle } from '@/lib/api';
+import { loginUserWithGoogle } from '@/lib/api';
+import { PageContext } from '@/context/PageContext';
 import { Container } from './styles';
 
 export const LoginForm = () => {
   const router = useRouter();
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
+  const { handleLogin } = useContext(PageContext);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -24,7 +26,7 @@ export const LoginForm = () => {
 
     setLoading(true);
     try {
-      await loginUserWithCredentials(form);
+      await handleLogin(form.email, form.password);
       router.push('/');
     } catch (err) {
       console.error("handleSubmit", err);
