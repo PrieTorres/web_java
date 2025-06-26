@@ -50,7 +50,7 @@ export const LoginForm = () => {
 
   return (
     <Container>
-      <main className="w-[475px] p-12 bg-white shadow-xl rounded-xl">
+      <main className="w-[475px] p-12 rounded-xl">
         <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -74,7 +74,7 @@ export const LoginForm = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md"
+            className="w-full py-2 rounded-md"
             disabled={loading}
           >
             {loading ? 'Entrando...' : 'Entrar'}
@@ -90,7 +90,7 @@ export const LoginForm = () => {
         </div>
 
         <p className="text-center mt-6 text-sm">
-          Ainda não tem uma conta? <a href="/signIn" className="text-blue-600 underline">Cadastre-se</a>
+          Ainda não tem uma conta? <a href="/signIn" className="underline">Cadastre-se</a>
         </p>
       </main>
     </Container>
