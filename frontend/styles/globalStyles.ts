@@ -10,6 +10,11 @@ export const GlobalStyles = createGlobalStyle`
     font-weight: 400;
     font-display: swap;
   }
+  
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 
   *{
     margin: 0;

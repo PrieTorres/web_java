@@ -9,13 +9,13 @@ export const Menu = () => {
       link: "/",
     },
     {
-      children: "courses",
-      link: "/courses",
+      children: "cadastrar pet",
+      link: "/petForm",
     },
-    {
-      children: "about",
-      link: "/about",
-    },
+    // {
+    //   children: "about",
+    //   link: "/about",
+    // },
   ];
 
   return (
