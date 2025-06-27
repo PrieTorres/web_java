@@ -1,9 +1,33 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useContext, useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useState, useEffect } from "react";
 import { PageContext } from "@/context/PageContext";
 import { fetchTk } from "@/lib/helper";
 import { Container } from "./styles";
+
+const tiposDeAnimais = [
+  "Cachorro",
+  "Gato",
+  "Coelho",
+  "Cavalo",
+  "Aranha",
+  "Hamster",
+  "Peixe",
+  "Pássaro",
+  "Porco",
+  "Tartaruga",
+  "Lagarto",
+  "Cobra",
+  "Papagaio",
+  "Furão",
+  "Iguana",
+  "Camaleão",
+  "Rato",
+  "Galinha",
+  "Pato",
+  "Ovelha",
+  "Vaca",
+];
 
 type FormState = {
   nome: string;
@@ -19,6 +43,7 @@ type FormState = {
   cep: string;
   latitude: string;
   longitude: string;
+  imagem: File | null;
 };
 
 export default function AddPetForm() {
@@ -37,6 +62,7 @@ export default function AddPetForm() {
     cep: "",
     latitude: "",
     longitude: "",
+    imagem: null,
   });
 
   const handleChange = (
@@ -46,8 +72,76 @@ export default function AddPetForm() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    setForm((prev) => ({ ...prev, imagem: file }));
+  };
+
+  const handleCepChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const cep = e.target.value;
+    setForm((prev) => ({ ...prev, cep }));
+    if (cep.replace(/\D/g, "").length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        if (res.ok) {
+          const data = await res.json();
+          setForm((prev) => ({
+            ...prev,
+            pais: "Brasil",
+            estado: data.uf ?? prev.estado,
+            cidade: data.localidade ?? prev.cidade,
+            bairro: data.bairro ?? prev.bairro,
+            rua: data.logradouro ?? prev.rua,
+          }));
+        }
+      } catch (err) {
+        console.error("Erro ao buscar CEP", err);
+      }
+    }
+  };
+
+  const updateCoordinates = async () => {
+    const address = `${form.rua} ${form.numero}, ${form.bairro}, ${form.cidade}, ${form.estado}, ${form.pais}`;
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          address
+        )}`
+      );
+      if (res.ok) {
+        const [info] = await res.json();
+        if (info) {
+          setForm((prev) => ({
+            ...prev,
+            latitude: info.lat,
+            longitude: info.lon,
+          }));
+        }
+      }
+    } catch (err) {
+      console.error("Erro ao obter coordenadas", err);
+    }
+  };
+
+  useEffect(() => {
+    if (form.rua && form.numero && form.cidade && form.estado && form.pais) {
+      updateCoordinates();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.rua, form.numero, form.bairro, form.cidade, form.estado, form.pais]);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    await updateCoordinates();
+    let imagemBase64: string | undefined = undefined;
+    if (form.imagem) {
+      imagemBase64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(form.imagem as Blob);
+      });
+    }
     const petData = {
       nome: form.nome,
       descricao: form.descricao,
@@ -67,6 +161,7 @@ export default function AddPetForm() {
         latitude: Number(form.latitude),
         longitude: Number(form.longitude),
       },
+      imagem: imagemBase64,
     };
     try {
       const res = await fetchTk("/api/pets/add", {
@@ -96,6 +191,7 @@ export default function AddPetForm() {
           cep: "",
           latitude: "",
           longitude: "",
+          imagem: null,
         });
       }
     } catch (err) {
@@ -121,18 +217,32 @@ export default function AddPetForm() {
           onChange={handleChange}
           className="input"
         />
-        <input
+        <select
           name="tipo"
-          placeholder="Tipo"
           value={form.tipo}
           onChange={handleChange}
           className="input"
-        />
+        >
+          <option value="">Selecione o tipo</option>
+          {tiposDeAnimais.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+        </select>
+        <input type="file" name="imagem" onChange={handleImageChange} className="input" />
         <input
           name="tags"
           placeholder="Tags (separadas por vírgula)"
           value={form.tags}
           onChange={handleChange}
+          className="input"
+        />
+        <input
+          name="cep"
+          placeholder="CEP"
+          value={form.cep}
+          onChange={handleCepChange}
           className="input"
         />
         <input
@@ -178,24 +288,17 @@ export default function AddPetForm() {
           className="input"
         />
         <input
-          name="cep"
-          placeholder="CEP"
-          value={form.cep}
-          onChange={handleChange}
-          className="input"
-        />
-        <input
           name="latitude"
           placeholder="Latitude"
           value={form.latitude}
-          onChange={handleChange}
+          readOnly
           className="input"
         />
         <input
           name="longitude"
           placeholder="Longitude"
           value={form.longitude}
-          onChange={handleChange}
+          readOnly
           className="input"
         />
         <button type="submit" className="submit">
