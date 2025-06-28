@@ -54,6 +54,15 @@ public class UsuarioController {
     @PostMapping("/add")
     public ResponseEntity<String> addData(@RequestBody Map<String, Object> data) {
         try {
+            String email = (String) data.get("email");
+            if (email != null) {
+                ApiFuture<QuerySnapshot> future = db.collection("usuarios")
+                        .whereEqualTo("email", email).limit(1).get();
+                if (!future.get().isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.CONFLICT)
+                            .body("Email já cadastrado.");
+                }
+            }
             if (data.containsKey("senha")) {
                 String senhaPlana = (String) data.get("senha");
                 String senhaHash = BCrypt.hashpw(senhaPlana, BCrypt.gensalt());
