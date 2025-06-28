@@ -64,6 +64,7 @@ export default function AddPetForm() {
     longitude: "",
     imagem: null,
   });
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -75,6 +76,11 @@ export default function AddPetForm() {
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
     setForm((prev) => ({ ...prev, imagem: file }));
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+    } else {
+      setImagePreview(null);
+    }
   };
 
   const handleCepChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -208,6 +214,7 @@ export default function AddPetForm() {
           placeholder="Nome"
           value={form.nome}
           onChange={handleChange}
+          required
           className="input"
         />
         <textarea
@@ -231,6 +238,9 @@ export default function AddPetForm() {
           ))}
         </select>
         <input type="file" name="imagem" onChange={handleImageChange} className="input" />
+        {imagePreview && (
+          <img src={imagePreview} alt="Pré-visualização" style={{ maxWidth: "100%", maxHeight: 200 }} />
+        )}
         <input
           name="tags"
           placeholder="Tags (separadas por vírgula)"
@@ -243,6 +253,7 @@ export default function AddPetForm() {
           placeholder="CEP"
           value={form.cep}
           onChange={handleCepChange}
+          required
           className="input"
         />
         <input
@@ -250,6 +261,7 @@ export default function AddPetForm() {
           placeholder="País"
           value={form.pais}
           onChange={handleChange}
+          required
           className="input"
         />
         <input
@@ -257,6 +269,7 @@ export default function AddPetForm() {
           placeholder="Estado"
           value={form.estado}
           onChange={handleChange}
+          required
           className="input"
         />
         <input
@@ -264,6 +277,7 @@ export default function AddPetForm() {
           placeholder="Cidade"
           value={form.cidade}
           onChange={handleChange}
+          required
           className="input"
         />
         <input
@@ -271,6 +285,7 @@ export default function AddPetForm() {
           placeholder="Bairro"
           value={form.bairro}
           onChange={handleChange}
+          required
           className="input"
         />
         <input
@@ -278,6 +293,7 @@ export default function AddPetForm() {
           placeholder="Rua"
           value={form.rua}
           onChange={handleChange}
+          required
           className="input"
         />
         <input
@@ -285,6 +301,7 @@ export default function AddPetForm() {
           placeholder="Número"
           value={form.numero}
           onChange={handleChange}
+          required
           className="input"
         />
         <input
