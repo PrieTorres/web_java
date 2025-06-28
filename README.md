@@ -47,3 +47,20 @@ cd backend
 firebase login
 firebase init
 firebase deploy
+
+```
+
+### ⚙️ Configurar Firebase
+
+1. Crie um projeto no Firebase e habilite o login com Google
+2. Adicione seu domínio (por exemplo `http://localhost:3000`) na lista de
+   domínios autorizados em **Authentication > Settings > Authorized domains**
+3. Crie um arquivo `.env.local` dentro da pasta `frontend` com as chaves abaixo:
+
+```bash
+NEXT_PUBLIC_FIREBASE_API_KEY=SuaApiKey
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=seuProjeto.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=seuProjetoId
+NEXT_PUBLIC_FIREBASE_APP_ID=SeuAppId
+```
+

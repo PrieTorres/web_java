@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useContext, FormEvent, ChangeEvent } from "react";
+import { useRouter } from "next/navigation";
 import { PageContext } from "@/context/PageContext";
 import { getUserByFirebaseUserId } from "@/lib/helper";
 import { LoadingSpin } from "@/components/LoadingSpin";
@@ -16,8 +17,9 @@ export const SignUpForm = () => {
   const [form, setForm] = useState({ username: "", email: "", password: "", confirmPassword: "" });
   const [loading, setLoading] = useState(false);
   const [strength, setStrength] = useState(0);
-  const { updateSessionId, handleLogin } = useContext(PageContext);
+  const { updateSessionId, handleLogin, updateUser } = useContext(PageContext);
   const [user] = useAuthState(auth);
+  const router = useRouter();
 
   const calcStrength = (password: string) => {
     let score = 0;
@@ -70,6 +72,10 @@ export const SignUpForm = () => {
         userData: googleUser,
       });
       updateSessionId?.(response?._id ?? response?.id ?? "");
+      if (typeof updateUser === 'function') {
+        updateUser(response);
+      }
+      router.push('/');
     } catch (error) {
       console.error('Erro ao autenticar com Google', error);
     }
