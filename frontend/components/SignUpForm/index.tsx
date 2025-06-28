@@ -14,11 +14,25 @@ import { Container } from "./styles";
 export const SignUpForm = () => {
   const [form, setForm] = useState({ username: "", email: "", password: "", confirmPassword: "" });
   const [loading, setLoading] = useState(false);
-  const { updateSessionId } = useContext(PageContext);
+  const [strength, setStrength] = useState(0);
+  const { updateSessionId, handleLogin } = useContext(PageContext);
   const [user] = useAuthState(auth);
+
+  const calcStrength = (password: string) => {
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+    return score;
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    if (e.target.name === 'password') {
+      setStrength(calcStrength(e.target.value));
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -38,7 +52,7 @@ export const SignUpForm = () => {
       });
       const text = await response.text();
       if (!response.ok) throw new Error(text);
-      updateSessionId?.(text);
+      await handleLogin(form.email, form.password);
     } catch (error) {
       console.error("Erro ao criar usuário:", error);
     } finally {
@@ -90,6 +104,12 @@ export const SignUpForm = () => {
               onChange={handleChange}
               className="w-full h-12 pl-8 border-b-2 input"
             />
+            <div className="w-full h-2 bg-gray-300 rounded mt-1">
+              <div
+                className={`${strength <= 2 ? 'bg-red-500' : strength === 3 ? 'bg-yellow-500' : 'bg-green-500'} h-full rounded`}
+                style={{ width: `${(strength / 5) * 100}%` }}
+              />
+            </div>
 
             <label className="block mt-6" htmlFor="confirmPassword">Confirme a senha</label>
             <input

@@ -34,6 +34,32 @@ export const PageProvider = ({ children }: { children: ReactNode }) => {
   const [sessionId, setSessionId] = useState<string>("");
   const [token, setToken] = useState<string>("");
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const storedToken = localStorage.getItem('token');
+    const storedSession = localStorage.getItem('sessionId');
+    if (storedToken) setToken(storedToken);
+    if (storedSession) setSessionId(storedSession);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (token) {
+      localStorage.setItem('token', token);
+    } else {
+      localStorage.removeItem('token');
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (sessionId) {
+      localStorage.setItem('sessionId', sessionId);
+    } else {
+      localStorage.removeItem('sessionId');
+    }
+  }, [sessionId]);
+
   const handleLogin = async (email: string, password: string) => {
     try {
       const res = await fetch("/api/login", {
