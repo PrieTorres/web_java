@@ -15,7 +15,7 @@ export const LoginForm = () => {
   const router = useRouter();
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
-  const { handleLogin, updateSessionId, updateUser } = useContext(PageContext);
+  const { handleLogin, updateSessionId, updateToken, updateUser } = useContext(PageContext);
 
   useEffect(() => {
     const checkRedirect = async () => {
@@ -27,12 +27,13 @@ export const LoginForm = () => {
           userData: googleUser,
         });
         updateSessionId?.(response._id ?? response.id);
+        updateToken?.(response.token ?? '');
         updateUser?.(response);
         router.push('/');
       }
     };
     checkRedirect();
-  }, [router, updateSessionId, updateUser]);
+  }, [router, updateSessionId, updateToken, updateUser]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -61,6 +62,7 @@ export const LoginForm = () => {
       const response = await loginUserWithGoogle();
       if (response?.id) {
         updateSessionId?.(response._id ?? response.id);
+        updateToken?.(response.token ?? '');
         updateUser?.(response);
         router.push('/');
       }

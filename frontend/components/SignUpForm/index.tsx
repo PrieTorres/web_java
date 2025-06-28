@@ -17,7 +17,7 @@ export const SignUpForm = () => {
   const [form, setForm] = useState({ username: "", email: "", password: "", confirmPassword: "" });
   const [loading, setLoading] = useState(false);
   const [strength, setStrength] = useState(0);
-  const { updateSessionId, handleLogin, updateUser } = useContext(PageContext);
+  const { updateSessionId, handleLogin, updateToken, updateUser } = useContext(PageContext);
   const [user] = useAuthState(auth);
   const router = useRouter();
 
@@ -31,6 +31,7 @@ export const SignUpForm = () => {
           userData: googleUser,
         });
         updateSessionId?.(response?._id ?? response?.id ?? '');
+        updateToken?.(response.token ?? '');
         if (typeof updateUser === 'function') {
           updateUser(response);
         }
@@ -38,7 +39,7 @@ export const SignUpForm = () => {
       }
     };
     checkRedirect();
-  }, [router, updateSessionId, updateUser]);
+  }, [router, updateSessionId, updateToken, updateUser]);
 
   const calcStrength = (password: string) => {
     let score = 0;
@@ -92,6 +93,7 @@ export const SignUpForm = () => {
         userData: googleUser,
       });
       updateSessionId?.(response?._id ?? response?.id ?? "");
+      updateToken?.(response.token ?? '');
       if (typeof updateUser === 'function') {
         updateUser(response);
       }
