@@ -9,6 +9,7 @@ import { getRedirectedUser } from '@/lib/firebase';
 import { getUserByFirebaseUserId } from '@/lib/helper';
 import { PageContext } from '@/context/PageContext';
 import { Container } from './styles';
+import { SafeImage } from '../SafeImage';
 
 export const LoginForm = () => {
   const router = useRouter();
@@ -106,7 +107,7 @@ export const LoginForm = () => {
 
         <div className="flex justify-center mt-4">
           <button onClick={handleGoogleLogin}>
-            <Image src={googleImage} alt="Google login" width={48} height={48} />
+            <SafeImage src={googleImage} alt="Google login" width={48} height={48} />
           </button>
         </div>
 

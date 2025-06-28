@@ -7,7 +7,7 @@ import { useThemeContext } from "../Provider/Provider";
 
 export interface SafeImageProps {
   src: string | StaticImageData;
-  text: string;
+  text?: string;
   /**
    * Width of the rendered image in pixels.
    * Defaults to 40.
@@ -18,9 +18,12 @@ export interface SafeImageProps {
    * Defaults to width when omitted.
    */
   height?: number;
+  className?: string;
+  alt?: string;
+  onClick?: () => void;
 }
 
-export const SafeImage = ({ src, text, width = 40, height }: SafeImageProps) => {
+export const SafeImage = ({ src, text, width = 40, height, className, alt, onClick }: SafeImageProps) => {
   const [imageError, setImageError] = useState(false);
   const theme = useThemeContext();
   const finalHeight = height ?? width;
@@ -28,19 +31,20 @@ export const SafeImage = ({ src, text, width = 40, height }: SafeImageProps) => 
   return (
     <Container width={width} height={finalHeight}>
       {!imageError ? (
-        <div className={theme.isLight ? "invert" : ""}>
+        <div className={theme.isLight ? "invert" : "" + (className || "")}>
           <Image
             className="grayscale"
             unoptimized
             src={src}
-            alt={text}
+            alt={alt ?? text ?? "no description"}
             width={width}
             height={finalHeight}
             onError={() => setImageError(true)}
+            onClick={onClick}
           />
         </div>
       ) : (
-        <TranslatedSpan>{text}</TranslatedSpan>
+        <TranslatedSpan>{text ?? ""}</TranslatedSpan>
       )}
     </Container>
   );

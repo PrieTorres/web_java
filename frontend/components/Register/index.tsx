@@ -1,5 +1,6 @@
 import Image from "next/image";
 import google from "../../assets/google.svg"
+import { SafeImage } from "../SafeImage";
 export const Register=()=>{
   
 
@@ -42,7 +43,7 @@ export const Register=()=>{
 
         <section className="flex place-content-center mt-6 gap-12">
           <a href="#">
-            <Image className="rounded-full w-14 h-14" width={56} height={56} src={google} alt=""/>
+            <SafeImage className="rounded-full w-14 h-14" width={56} height={56} src={google} alt=""/>
           </a>
         </section>
 
