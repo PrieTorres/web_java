@@ -15,7 +15,7 @@ type PageContextProps = {
   handleLogin: (email: string, password: string) => Promise<void>;
   handleSignUp: (name: string, email: string, password: string) => Promise<void>;
   updateSessionId?: (id: string) => void;
-  updateUser?: (user: User) => void;
+  updateUser?: (user: User | null) => void;
   updateToken?: (token: string) => void;
 };
 
@@ -96,7 +96,7 @@ export const PageProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateSessionId = (id: string) => setSessionId(id);
-  const updateUser = (u: User) => setUser(u);
+  const updateUser = (u: User | null) => setUser(u);
   const updateToken = (t: string) => setToken(t);
 
   const contextValue = useMemo(() => ({

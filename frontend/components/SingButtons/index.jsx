@@ -3,7 +3,7 @@ import { Container } from './styles';
 import Link from "next/link";
 import Image from "next/image";
 import { useContext, useState } from "react";
-// import { auth } from '@/firebase';
+import { auth } from '@/lib/firebase';
 import { signOut as firebaseSignOut } from 'firebase/auth';
 import { PageContext } from '@/context/PageContext';
 import defaultIcon from "@/assets/img/default_user_photo.png";
@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 
 export const SignButtons = () => {
   const [toggleDropdown, setToggleDropdown] = useState(false);
-  const { updateSessionId, userId, user } = useContext(PageContext);
+  const { updateSessionId, updateToken, updateUser, userId, user } = useContext(PageContext);
   const router = useRouter();
 
 
@@ -20,6 +20,12 @@ export const SignButtons = () => {
     firebaseSignOut(auth);
     if (typeof updateSessionId === 'function') {
       updateSessionId("");
+    }
+    if (typeof updateToken === 'function') {
+      updateToken("");
+    }
+    if (typeof updateUser === 'function') {
+      updateUser(null);
     }
   }
 
