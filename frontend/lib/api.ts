@@ -18,11 +18,13 @@ export async function loginUserWithCredentials({
 }
 
 // Exemplo futuro para login com Google
-import { signInWithGoogle } from './firebase';
+import { signInWithGoogle, getRedirectedUser } from './firebase';
 import { getUserByFirebaseUserId } from './helper';
 
 export async function loginUserWithGoogle() {
-  const firebaseUser = await signInWithGoogle();
+  const redirectUser = await getRedirectedUser();
+  const firebaseUser = redirectUser ?? (await signInWithGoogle());
+  if (!firebaseUser) return null;
   return getUserByFirebaseUserId({
     firebaseUserId: firebaseUser.uid,
     createUser: true,

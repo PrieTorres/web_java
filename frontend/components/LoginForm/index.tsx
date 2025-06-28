@@ -1,10 +1,12 @@
 'use client';
 
-import { FormEvent, useState, useContext } from 'react';
+import { FormEvent, useState, useContext, useEffect } from 'react';
 import Image from 'next/image';
 import googleImage from '@/assets/google.svg';
 import { useRouter } from 'next/navigation';
 import { loginUserWithGoogle } from '@/lib/api';
+import { getRedirectedUser } from '@/lib/firebase';
+import { getUserByFirebaseUserId } from '@/lib/helper';
 import { PageContext } from '@/context/PageContext';
 import { Container } from './styles';
 
@@ -13,6 +15,23 @@ export const LoginForm = () => {
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const { handleLogin, updateSessionId, updateUser } = useContext(PageContext);
+
+  useEffect(() => {
+    const checkRedirect = async () => {
+      const googleUser = await getRedirectedUser();
+      if (googleUser) {
+        const response = await getUserByFirebaseUserId({
+          firebaseUserId: googleUser.uid,
+          createUser: true,
+          userData: googleUser,
+        });
+        updateSessionId?.(response._id ?? response.id);
+        updateUser?.(response);
+        router.push('/');
+      }
+    };
+    checkRedirect();
+  }, [router, updateSessionId, updateUser]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));

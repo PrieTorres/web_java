@@ -64,3 +64,8 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=seuProjetoId
 NEXT_PUBLIC_FIREBASE_APP_ID=SeuAppId
 ```
 
+O login com Google tenta abrir um popup. Caso seja bloqueado, a aplicação faz
+um redirecionamento para concluir a autenticação e retorna à página atual.
+
+Se ao autenticar com o Google aparecer o erro `CONFIGURATION_NOT_FOUND`, verifique se o domínio está autorizado e se as chaves pertencem ao mesmo projeto Firebase.
+

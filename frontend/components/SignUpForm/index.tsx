@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useContext, FormEvent, ChangeEvent } from "react";
+import { useState, useContext, FormEvent, ChangeEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { PageContext } from "@/context/PageContext";
 import { getUserByFirebaseUserId } from "@/lib/helper";
 import { LoadingSpin } from "@/components/LoadingSpin";
-import { signInWithGoogle, auth } from "@/lib/firebase";
+import { signInWithGoogle, auth, getRedirectedUser } from "@/lib/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import googleImage from "@/assets/google.svg";
 import Image from "next/image";
@@ -20,6 +20,25 @@ export const SignUpForm = () => {
   const { updateSessionId, handleLogin, updateUser } = useContext(PageContext);
   const [user] = useAuthState(auth);
   const router = useRouter();
+
+  useEffect(() => {
+    const checkRedirect = async () => {
+      const googleUser = await getRedirectedUser();
+      if (googleUser) {
+        const response = await getUserByFirebaseUserId({
+          firebaseUserId: googleUser.uid,
+          createUser: true,
+          userData: googleUser,
+        });
+        updateSessionId?.(response?._id ?? response?.id ?? '');
+        if (typeof updateUser === 'function') {
+          updateUser(response);
+        }
+        router.push('/');
+      }
+    };
+    checkRedirect();
+  }, [router, updateSessionId, updateUser]);
 
   const calcStrength = (password: string) => {
     let score = 0;
@@ -66,6 +85,7 @@ export const SignUpForm = () => {
   const handleGoogleLogin = async () => {
     try {
       const googleUser = await signInWithGoogle();
+      if (!googleUser) return; // handled via redirect
       const response = await getUserByFirebaseUserId({
         firebaseUserId: googleUser.uid,
         createUser: true,

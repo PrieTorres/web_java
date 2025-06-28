@@ -21,18 +21,24 @@ export const auth = getAuth(app);
 
 const provider = new GoogleAuthProvider();
 
-export async function signInWithGoogle(): Promise<User> {
+export async function signInWithGoogle(): Promise<User | null> {
   try {
     const result = await signInWithPopup(auth, provider);
     return result.user;
   } catch (err) {
-    console.error('signInWithPopup failed, trying redirect', err);
+    console.error('signInWithPopup failed, falling back to redirect', err);
     await signInWithRedirect(auth, provider);
-    const redirect = await getRedirectResult(auth);
-    if (!redirect) {
-      throw err;
-    }
-    return redirect.user;
+    return null; // will redirect, result handled on return
+  }
+}
+
+export async function getRedirectedUser(): Promise<User | null> {
+  try {
+    const result = await getRedirectResult(auth);
+    return result?.user ?? null;
+  } catch (err) {
+    console.error('getRedirectResult error', err);
+    return null;
   }
 }
 
