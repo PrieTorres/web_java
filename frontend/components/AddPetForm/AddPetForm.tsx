@@ -4,6 +4,8 @@ import { ChangeEvent, FormEvent, useContext, useState, useEffect } from "react";
 import { PageContext } from "@/context/PageContext";
 import { fetchTk } from "@/lib/helper";
 import { Container } from "./styles";
+import { storage } from "@/lib/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const tiposDeAnimais = [
   "Cachorro",
@@ -65,6 +67,7 @@ export default function AddPetForm() {
     imagem: null,
   });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -139,14 +142,18 @@ export default function AddPetForm() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     await updateCoordinates();
-    let imagemBase64: string | undefined = undefined;
+    let imagemUrl: string | undefined = undefined;
     if (form.imagem) {
-      imagemBase64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result));
-        reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(form.imagem as Blob);
-      });
+      if (form.imagem.size > MAX_FILE_SIZE) {
+        alert("Imagem excede o limite de 100MB.");
+        return;
+      }
+      const storageRef = ref(
+        storage,
+        `pets/${Date.now()}_${form.imagem.name}`
+      );
+      await uploadBytes(storageRef, form.imagem);
+      imagemUrl = await getDownloadURL(storageRef);
     }
     const petData = {
       nome: form.nome,
@@ -167,10 +174,10 @@ export default function AddPetForm() {
         latitude: Number(form.latitude),
         longitude: Number(form.longitude),
       },
-      imagem: imagemBase64,
+      imagem: imagemUrl,
     };
     try {
-      const res = await fetchTk("/api/pets/add", {
+      const res = await fetchTk("/api/pets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -199,6 +206,7 @@ export default function AddPetForm() {
           longitude: "",
           imagem: null,
         });
+        setImagePreview(null);
       }
     } catch (err) {
       console.error("handleSubmit", err);
