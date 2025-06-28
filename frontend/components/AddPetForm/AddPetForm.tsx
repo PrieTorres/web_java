@@ -209,6 +209,7 @@ export default function AddPetForm() {
   return (
     <Container>
       <form onSubmit={handleSubmit}>
+        <h1>Adicionar Pet</h1>
         <input
           name="nome"
           placeholder="Nome"
@@ -239,7 +240,7 @@ export default function AddPetForm() {
         </select>
         <input type="file" name="imagem" onChange={handleImageChange} className="input" />
         {imagePreview && (
-          <img src={imagePreview} alt="Pré-visualização" style={{ maxWidth: "100%", maxHeight: 200 }} />
+          <img src={imagePreview} alt="Pré-visualização" className="preview" />
         )}
         <input
           name="tags"
