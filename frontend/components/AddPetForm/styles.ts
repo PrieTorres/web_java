@@ -44,17 +44,16 @@ export const Container = styled.div`
       border-radius: ${theme.radius.small};
     }
 
+    & .tag-input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: ${theme.spacings.xsmall};
+    }
+
     & .tags {
       display: flex;
       flex-wrap: wrap;
       gap: ${theme.spacings.xsmall};
-    }
-
-    & .tag {
-      padding: 0 ${theme.spacings.xsmall};
-      background: ${theme.colors.secondaryBgDarker};
-      border-radius: ${theme.radius.small};
-      cursor: pointer;
     }
 
     & .submit {

@@ -4,6 +4,7 @@ import { ChangeEvent, FormEvent, KeyboardEvent, useContext, useState, useEffect 
 import { PageContext } from "@/context/PageContext";
 import { fetchTk } from "@/lib/helper";
 import { Container } from "./styles";
+import { TagChip } from "../TagChip";
 
 const tiposDeAnimais = [
   "Cachorro",
@@ -277,12 +278,7 @@ export default function AddPetForm() {
                 <img src={imagePreview} alt="Pré-visualização" className="preview" />
               </div>
             )}
-            <div className="tags">
-              {form.tags.map((t) => (
-                <span key={t} className="tag" onClick={() => removeTag(t)}>
-                  {t}
-                </span>
-              ))}
+            <div className="tag-input-wrapper">
               <input
                 name="tags"
                 placeholder="Digite e pressione , ou Enter"
@@ -291,6 +287,13 @@ export default function AddPetForm() {
                 onKeyDown={handleTagKeyDown}
                 className="input"
               />
+              {form.tags.length > 0 && (
+                <div className="tags">
+                  {form.tags.map((t) => (
+                    <TagChip key={t} label={t} onRemove={() => removeTag(t)} />
+                  ))}
+                </div>
+              )}
             </div>
             <button type="button" onClick={() => setStep(2)} className="nav">
               Próximo
