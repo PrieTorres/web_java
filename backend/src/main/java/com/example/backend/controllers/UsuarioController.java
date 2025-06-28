@@ -22,6 +22,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.firebase.cloud.FirestoreClient;
 import com.example.backend.services.TokenService;
+import com.example.backend.models.ApiError;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -52,29 +53,38 @@ public class UsuarioController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addData(@RequestBody Map<String, Object> data) {
+    public ResponseEntity<?> addData(@RequestBody Map<String, Object> data) {
         try {
-            if (data.containsKey("senha")) {
-                String senhaPlana = (String) data.get("senha");
-                String senhaHash = BCrypt.hashpw(senhaPlana, BCrypt.gensalt());
-                data.put("senha", senhaHash);
+            Object email = data.get("email");
+            Object senha = data.get("senha");
+            if (email == null || senha == null
+                    || email.toString().isBlank() || senha.toString().isBlank()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ApiError("Email e senha são obrigatórios."));
             }
+
+            String senhaPlana = senha.toString();
+            String senhaHash = BCrypt.hashpw(senhaPlana, BCrypt.gensalt());
+            data.put("senha", senhaHash);
+
             db.collection("usuarios").add(data);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Usuário cadastrado com sucesso!");
+            Map<String, String> resp = new HashMap<>();
+            resp.put("message", "Usuário cadastrado com sucesso!");
+            return ResponseEntity.status(HttpStatus.CREATED).body(resp);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiError("Erro: " + e.getMessage()));
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, Object> loginData) throws ExecutionException, InterruptedException {
+    public ResponseEntity<?> login(@RequestBody Map<String, Object> loginData) throws ExecutionException, InterruptedException {
         String email = (String) loginData.get("email");
         String senha = (String) loginData.get("senha");
 
         if (email == null || senha == null) {
-            Map<String, String> err = new HashMap<>();
-            err.put("error", "Email e senha são obrigatórios.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiError("Email e senha são obrigatórios."));
         }
 
         ApiFuture<QuerySnapshot> future = db.collection("usuarios")
@@ -83,26 +93,23 @@ public class UsuarioController {
         snapshot = future.get();
 
         if (snapshot.isEmpty()) {
-            Map<String, String> err = new HashMap<>();
-            err.put("error", "Usuário não encontrado.");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiError("Usuário não encontrado."));
         }
 
         DocumentSnapshot userDoc = snapshot.getDocuments().get(0);
         Map<String, Object> userData = userDoc.getData();
 
         if (userData == null || !userData.containsKey("senha")) {
-            Map<String, String> err = new HashMap<>();
-            err.put("error", "Erro interno: senha não encontrada.");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiError("Erro interno: senha não encontrada."));
         }
 
         String senhaHash = (String) userData.get("senha");
 
         if (!BCrypt.checkpw(senha, senhaHash)) {
-            Map<String, String> err = new HashMap<>();
-            err.put("error", "Senha incorreta.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiError("Senha incorreta."));
         }
 
         String token = tokenService.createSession(userDoc.getId());
@@ -113,14 +120,14 @@ public class UsuarioController {
     }
 
     @GetMapping("/firebase/{uid}")
-    public ResponseEntity<Map<String, Object>> getUserByFirebaseId(@PathVariable String uid)
+    public ResponseEntity<?> getUserByFirebaseId(@PathVariable String uid)
             throws ExecutionException, InterruptedException {
         ApiFuture<QuerySnapshot> future = db.collection("usuarios")
                 .whereEqualTo("firebaseUserId", uid).limit(1).get();
         QuerySnapshot snapshot = future.get();
 
         if (snapshot.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiError("Usuário não encontrado"));
         }
 
         DocumentSnapshot doc = snapshot.getDocuments().get(0);
