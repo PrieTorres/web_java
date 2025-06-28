@@ -1,10 +1,12 @@
 package com.example.backend.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,78 +14,83 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import com.example.backend.models.ApiError;
 import com.example.backend.models.Pet;
+import com.example.backend.services.PetService;
 import com.example.backend.services.TokenService;
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QuerySnapshot;
-import com.google.firebase.cloud.FirestoreClient;
 
 @RestController
 @RequestMapping("/api/pets")
 public class PetController {
 
-    Firestore db = FirestoreClient.getFirestore();
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private PetService petService;
+
     @GetMapping("")
-    public List<Map<String, Object>> listarTodosPets() throws ExecutionException, InterruptedException {
-        List<Map<String, Object>> pets = new ArrayList<>();
-        ApiFuture<QuerySnapshot> future = db.collection("pets").get();
-        for (DocumentSnapshot doc : future.get().getDocuments()) {
-            pets.add(doc.getData());
+    public ResponseEntity<List<Map<String, Object>>> listarTodosPets() throws ExecutionException, InterruptedException {
+        List<Map<String, Object>> pets = petService.findAll();
+        return ResponseEntity.ok(pets);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> obterPetPorId(@PathVariable String id) throws ExecutionException, InterruptedException {
+        Map<String, Object> pet = petService.findById(id);
+        if (pet == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiError("Pet não encontrado"));
         }
-        return pets;
+        return ResponseEntity.ok(pet);
     }
 
     @GetMapping("/usuario/{userId}")
-    public List<Map<String, Object>> listarPetsDoUsuario(@PathVariable String userId) throws ExecutionException, InterruptedException {
-        List<Map<String, Object>> pets = new ArrayList<>();
-        ApiFuture<QuerySnapshot> future = db.collection("pets")
-            .whereEqualTo("userId", userId)
-            .get();
-        for (DocumentSnapshot doc : future.get().getDocuments()) {
-            pets.add(doc.getData());
-        }
-        return pets;
+    public ResponseEntity<List<Map<String, Object>>> listarPetsDoUsuario(@PathVariable String userId) throws ExecutionException, InterruptedException {
+        List<Map<String, Object>> pets = petService.findByUserId(userId);
+        return ResponseEntity.ok(pets);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<String> adicionarPet(@RequestBody Pet pet,
+    @PostMapping
+    public ResponseEntity<?> adicionarPet(@RequestBody Pet pet,
             @RequestHeader("Authorization") String token) {
+        if (
+            pet.getNome() == null || 
+            pet.getNome().isBlank() || 
+            pet.getLocalizacao() == null || 
+            pet.getTipo().isBlank() ||
+            pet.getTipo() == null ||
+            pet.getLocalizacao().getLatitude() == null || 
+            pet.getLocalizacao().getLongitude() == null
+        ) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiError("Nome, tipo do animal, localização, latitude e longitude são obrigatórios."));
+        }
         String userId = tokenService.getUserId(token);
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiError("Token inválido"));
         }
         try {
             pet.setUserId(userId);
-            db.collection("pets").add(pet);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Pet adicionado com sucesso!");
+            String id = petService.addPet(pet);
+            Map<String, Object> resp = Map.of(
+                    "message", "Pet adicionado com sucesso!",
+                    "id", id);
+            return ResponseEntity.status(HttpStatus.CREATED).body(resp);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao adicionar pet: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiError("Erro ao adicionar pet: " + e.getMessage()));
         }
     }
 
     @GetMapping("/me")
-    public ResponseEntity<List<Map<String, Object>>> listarPetsDoUsuarioToken(@RequestHeader("Authorization") String token)
+    public ResponseEntity<?> listarPetsDoUsuarioToken(@RequestHeader("Authorization") String token)
             throws ExecutionException, InterruptedException {
         String userId = tokenService.getUserId(token);
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiError("Token inválido"));
         }
-        List<Map<String, Object>> pets = new ArrayList<>();
-        ApiFuture<QuerySnapshot> future = db.collection("pets")
-                .whereEqualTo("userId", userId)
-                .get();
-        for (DocumentSnapshot doc : future.get().getDocuments()) {
-            pets.add(doc.getData());
-        }
+        List<Map<String, Object>> pets = petService.findByUserId(userId);
         return ResponseEntity.ok(pets);
     }
 }
