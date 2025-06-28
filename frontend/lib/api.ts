@@ -18,7 +18,16 @@ export async function loginUserWithCredentials({
 }
 
 // Exemplo futuro para login com Google
+import { signInWithGoogle, getRedirectedUser } from './firebase';
+import { getUserByFirebaseUserId } from './helper';
+
 export async function loginUserWithGoogle() {
-  // você pode chamar uma rota que aceite o Firebase ID Token e autentique no backend Java
-  return { id: 'fake-google-user-id' };
+  const redirectUser = await getRedirectedUser();
+  const firebaseUser = redirectUser ?? (await signInWithGoogle());
+  if (!firebaseUser) return null;
+  return getUserByFirebaseUserId({
+    firebaseUserId: firebaseUser.uid,
+    createUser: true,
+    userData: firebaseUser,
+  });
 }
