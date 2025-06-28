@@ -62,10 +62,16 @@ export const SignUpForm = () => {
   };
 
   const handleGoogleLogin = async () => {
-    await signInWithGoogle();
-    if (user) {
-      const response = await getUserByFirebaseUserId({ firebaseUserId: user.uid, createUser: true, userData: user });
+    try {
+      const googleUser = await signInWithGoogle();
+      const response = await getUserByFirebaseUserId({
+        firebaseUserId: googleUser.uid,
+        createUser: true,
+        userData: googleUser,
+      });
       updateSessionId?.(response?._id ?? response?.id ?? "");
+    } catch (error) {
+      console.error('Erro ao autenticar com Google', error);
     }
   };
 

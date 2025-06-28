@@ -12,7 +12,7 @@ export const LoginForm = () => {
   const router = useRouter();
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
-  const { handleLogin } = useContext(PageContext);
+  const { handleLogin, updateSessionId, updateUser } = useContext(PageContext);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -38,8 +38,10 @@ export const LoginForm = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      const user = await loginUserWithGoogle();
-      if (user?.id) {
+      const response = await loginUserWithGoogle();
+      if (response?.id) {
+        updateSessionId?.(response._id ?? response.id);
+        updateUser?.(response);
         router.push('/');
       }
     } catch (err) {
