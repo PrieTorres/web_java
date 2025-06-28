@@ -1,17 +1,23 @@
 import styled, { DefaultTheme, css } from 'styled-components';
 
-export const Container = styled.div`
-  ${({ }: { theme: DefaultTheme, height?: number }) => css`
-      height: 100%;
-      width: fit-content;
-      display: flex;
-      align-items: center;
+interface ContainerProps {
+  theme: DefaultTheme;
+  width?: number;
+  height?: number;
+}
 
-      > img {
-        height: 100%;
-        object-fit: contain;
-        width: fit-content;
-        max-width: 100%;
-      }
+export const Container = styled.div`
+  ${({ width, height }: ContainerProps) => css`
+    width: ${width ? `${width}px` : 'fit-content'};
+    height: ${height ? `${height}px` : '100%'};
+    display: flex;
+    align-items: center;
+
+    > img {
+      height: 100%;
+      object-fit: contain;
+      width: 100%;
+      max-width: 100%;
+    }
   `}
 `;
