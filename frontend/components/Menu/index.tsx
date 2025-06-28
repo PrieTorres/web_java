@@ -12,10 +12,10 @@ export const Menu = () => {
       children: "cadastrar pet",
       link: "/petForm",
     },
-    // {
-    //   children: "about",
-    //   link: "/about",
-    // },
+    {
+      children: "pets para adoção",
+      link: "/allPets",
+    },
   ];
 
   return (
