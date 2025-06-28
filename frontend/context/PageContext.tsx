@@ -15,7 +15,7 @@ type PageContextProps = {
   handleLogin: (email: string, password: string) => Promise<void>;
   handleSignUp: (name: string, email: string, password: string) => Promise<void>;
   updateSessionId?: (id: string) => void;
-  updateUser?: (user: User) => void;
+  updateUser?: (user: User | null) => void;
   updateToken?: (token: string) => void;
 };
 
@@ -33,6 +33,32 @@ export const PageProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [sessionId, setSessionId] = useState<string>("");
   const [token, setToken] = useState<string>("");
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const storedToken = localStorage.getItem('token');
+    const storedSession = localStorage.getItem('sessionId');
+    if (storedToken) setToken(storedToken);
+    if (storedSession) setSessionId(storedSession);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (token) {
+      localStorage.setItem('token', token);
+    } else {
+      localStorage.removeItem('token');
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (sessionId) {
+      localStorage.setItem('sessionId', sessionId);
+    } else {
+      localStorage.removeItem('sessionId');
+    }
+  }, [sessionId]);
 
   const handleLogin = async (email: string, password: string) => {
     try {
@@ -70,7 +96,7 @@ export const PageProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateSessionId = (id: string) => setSessionId(id);
-  const updateUser = (u: User) => setUser(u);
+  const updateUser = (u: User | null) => setUser(u);
   const updateToken = (t: string) => setToken(t);
 
   const contextValue = useMemo(() => ({

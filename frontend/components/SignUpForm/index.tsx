@@ -9,16 +9,31 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import googleImage from "@/assets/google.svg";
 import Image from "next/image";
 import Link from "next/link";
-import { Container } from "./styles";
+import { Container, StrengthWrapper, StrengthBar } from "./styles";
+import { IconSpan } from "../IconSpan";
 
 export const SignUpForm = () => {
   const [form, setForm] = useState({ username: "", email: "", password: "", confirmPassword: "" });
   const [loading, setLoading] = useState(false);
-  const { updateSessionId } = useContext(PageContext);
+  const [strength, setStrength] = useState(0);
+  const { updateSessionId, handleLogin } = useContext(PageContext);
   const [user] = useAuthState(auth);
+
+  const calcStrength = (password: string) => {
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+    return score;
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    if (e.target.name === 'password') {
+      setStrength(calcStrength(e.target.value));
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -38,7 +53,7 @@ export const SignUpForm = () => {
       });
       const text = await response.text();
       if (!response.ok) throw new Error(text);
-      updateSessionId?.(text);
+      await handleLogin(form.email, form.password);
     } catch (error) {
       console.error("Erro ao criar usuário:", error);
     } finally {
@@ -90,6 +105,9 @@ export const SignUpForm = () => {
               onChange={handleChange}
               className="w-full h-12 pl-8 border-b-2 input"
             />
+            <StrengthWrapper>
+              <StrengthBar strength={strength} />
+            </StrengthWrapper>
 
             <label className="block mt-6" htmlFor="confirmPassword">Confirme a senha</label>
             <input
@@ -100,6 +118,11 @@ export const SignUpForm = () => {
               onChange={handleChange}
               className="w-full h-12 pl-8 border-b-2 input"
             />
+
+            {
+              form.password && form.confirmPassword && form.password !== form.confirmPassword &&
+              <p className="flex items-center mt-2 danger-text gap-2">As senhas não coincidem<IconSpan icon="warning_amber" type="round" /></p>
+            }
 
             <button type="submit" className="mt-8 w-full h-12 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
               {loading ? <LoadingSpin /> : "Cadastrar"}

@@ -60,3 +60,21 @@ export const Container = styled.div`
    
   `}
 `;
+
+export const StrengthWrapper = styled.div`
+  width: 100%;
+  min-width: 200px;
+  height: 0.5rem;
+  background: #d1d5db;
+  border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.radius.small};
+  margin-top: 0.25rem;
+`;
+
+export const StrengthBar = styled.div<{ strength: number }>`
+  height: 100%;
+  width: ${({ strength }) => `${(strength / 5) * 100}%`};
+  border-radius: inherit;
+  transition: width 0.3s ease;
+  background-color: ${({ strength }) =>
+    strength <= 2 ? '#ef4444' : strength === 3 ? '#facc15' : '#22c55e'};
+`;
