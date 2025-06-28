@@ -10,6 +10,7 @@ import googleImage from "@/assets/google.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { Container, StrengthWrapper, StrengthBar } from "./styles";
+import { IconSpan } from "../IconSpan";
 
 export const SignUpForm = () => {
   const [form, setForm] = useState({ username: "", email: "", password: "", confirmPassword: "" });
@@ -117,6 +118,11 @@ export const SignUpForm = () => {
               onChange={handleChange}
               className="w-full h-12 pl-8 border-b-2 input"
             />
+
+            {
+              form.password && form.confirmPassword && form.password !== form.confirmPassword &&
+              <p className="flex items-center mt-2 danger-text gap-2">As senhas não coincidem<IconSpan icon="warning_amber" type="round" /></p>
+            }
 
             <button type="submit" className="mt-8 w-full h-12 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
               {loading ? <LoadingSpin /> : "Cadastrar"}
