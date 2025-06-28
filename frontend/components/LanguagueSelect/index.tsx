@@ -13,12 +13,12 @@ export const LanguageSelect = (): ReactElement => {
   const selectLanguage = [
     {
       id: "en",
-      children: <SafeImage text={"english"} src={euaFlag} />,
+      children: <SafeImage text={"english"} src={euaFlag} width={30} height={20} />,
       onClick: () => changeLanguage("en")
     },
     {
       id: "pt",
-      children: <SafeImage text={"portuguese"} src={brasilFlag} />,
+      children: <SafeImage text={"portuguese"} src={brasilFlag} width={30} height={20} />,
       onClick: () => changeLanguage("pt")
     },
   ];

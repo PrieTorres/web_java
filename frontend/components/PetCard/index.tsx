@@ -17,7 +17,12 @@ export const PetCard = ({ pet }: PetCardProps) => {
   return (
     <Styled.Container>
       <Styled.ImageWrapper>
-        <SafeImage src={pet.imagem ?? "https://via.placeholder.com/300x200"} text={pet.nome} height={200} />
+        <SafeImage
+          src={pet.imagem ?? "https://via.placeholder.com/300x200"}
+          text={pet.nome}
+          width={300}
+          height={200}
+        />
       </Styled.ImageWrapper>
       <Styled.Content>
         <h3>{pet.nome}</h3>
@@ -34,3 +39,4 @@ export const PetCard = ({ pet }: PetCardProps) => {
     </Styled.Container>
   );
 };
+
