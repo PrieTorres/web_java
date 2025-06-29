@@ -10,12 +10,14 @@ import { getUserByFirebaseUserId } from '@/lib/helper';
 import { PageContext } from '@/context/PageContext';
 import { Container } from './styles';
 import { SafeImage } from '../SafeImage';
+import { useAlert } from '@/context/AlertContext';
 
 export const LoginForm = () => {
   const router = useRouter();
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const { handleLogin, updateSessionId, updateToken, updateUser } = useContext(PageContext);
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     const checkRedirect = async () => {
@@ -42,7 +44,8 @@ export const LoginForm = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!form.email || !form.password) {
-      return alert('Preencha email e senha.');
+      showAlert('Preencha email e senha.', 'error');
+      return;
     }
 
     setLoading(true);
@@ -51,7 +54,7 @@ export const LoginForm = () => {
       router.push('/');
     } catch (err) {
       console.error("handleSubmit", err);
-      alert('Erro ao fazer login');
+      showAlert('Erro ao fazer login', 'error');
     } finally {
       setLoading(false);
     }
@@ -68,7 +71,7 @@ export const LoginForm = () => {
       }
     } catch (err) {
       console.error("handleGoogleLogin", err);
-      alert('Erro ao fazer login com Google');
+      showAlert('Erro ao fazer login com Google', 'error');
     }
   };
 

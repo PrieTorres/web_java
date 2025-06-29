@@ -6,6 +6,7 @@ import { GlobalStyles } from "@/styles/globalStyles";
 import StyledComponentsRegistry from '@/lib/registry';
 import useI18n from '@/hooks/useI18n';
 import { PageProvider } from '@/context/PageContext';
+import { AlertProvider } from '@/context/AlertContext';
 import { DefaultTheme } from 'styled-components';
 
 interface ThemeContextType {
@@ -55,7 +56,9 @@ export const Provider = ({ children }: { children: ReactNode }): ReactElement =>
         <ThemeProvider theme={currentTheme}>
           <GlobalStyles />
           <PageProvider>
-            {children}
+            <AlertProvider>
+              {children}
+            </AlertProvider>
           </PageProvider>
         </ThemeProvider>
       </ThemeContext.Provider>
