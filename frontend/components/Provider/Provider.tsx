@@ -1,7 +1,7 @@
 "use client";
 import { createContext, ReactElement, ReactNode, useContext, useEffect, useState } from 'react';
 import { ThemeProvider } from "styled-components";
-import { theme, themeLight } from "@/styles/theme";
+import { themeDark, themeLight } from "@/styles/theme";
 import { GlobalStyles } from "@/styles/globalStyles";
 import StyledComponentsRegistry from '@/lib/registry';
 import useI18n from '@/hooks/useI18n';
@@ -27,27 +27,31 @@ export const useThemeContext = () => {
 export const Provider = ({ children }: { children: ReactNode }): ReactElement => {
   useI18n();
   // const [mounted, setMounted] = useState(false);
-  const [currentTheme, setCurrentTheme] = useState<DefaultTheme>(theme);
+  const [currentTheme, setCurrentTheme] = useState<DefaultTheme>(themeDark);
 
   const [isLight, setIsLight] = useState<boolean>(false);
 
-  // useEffect(() => {
-  //   setMounted(true);
-  //   const savedTheme = localStorage.getItem("IsLight");
-  //   if (savedTheme) {
-  //     setIsLight(JSON.parse(savedTheme));
-  //   }
-  // }, []);
   useEffect(() => {
-    setCurrentTheme(isLight ? themeLight : theme);
+    const savedTheme = localStorage.getItem("IsLight");
+    if (savedTheme !== null) {
+      setIsLight(JSON.parse(savedTheme));
+    }
+  }, []);
+
+  useEffect(() => {
+    setCurrentTheme(isLight ? themeLight : themeDark);
+    const root = document.documentElement;
+    if (isLight) {
+      root.classList.remove("dark");
+    } else {
+      root.classList.add("dark");
+    }
+    localStorage.setItem("IsLight", JSON.stringify(isLight));
   }, [isLight]);
 
 
   const changeTheme = () => {
-    const newTheme = !isLight;
-
-    setIsLight(newTheme);
-    localStorage.setItem("IsLight", JSON.stringify(newTheme));
+    setIsLight((prev) => !prev);
   };
 
   return (

@@ -1,6 +1,6 @@
 import { Colors } from "./COLORS";
 
-export const theme = {
+export const themeDark = {
   colors: {
     ...Colors,
   },
@@ -96,5 +96,14 @@ export const theme = {
 } as const;
 
 export const themeLight = {
-  ...theme
+  ...themeDark,
+  colors: {
+    ...themeDark.colors,
+    mainBg: Colors.white,
+    secondaryColor: Colors.mainColor,
+    secondaryBg: Colors.lightGray,
+    secondaryBgDarker: '#e5e5e5',
+  },
 } as const;
+
+export { themeDark as theme };

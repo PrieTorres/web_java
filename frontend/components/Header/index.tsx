@@ -19,7 +19,9 @@ export const Header = (): ReactElement => {
         </div>
         <div className='text-[1.5rem] flex gap-4 '>
           <SignButtons  />
-          <button   onClick={changeTheme}>{isLight ? "Dark 🌑" : "Light ☀"}</button>
+          <button onClick={changeTheme} className="p-2 rounded bg-gray-200 dark:bg-gray-700">
+            {isLight ? "Dark 🌑" : "Light ☀"}
+          </button>
         </div>
         <div className="hidden max-sm:block" style={{ width: "100%" }}>
           <Menu />
