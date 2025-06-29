@@ -10,6 +10,8 @@ export interface PetCardProps {
     tipo?: string;
     tags?: string[];
     imagem?: string;
+    matchTags?: string[];
+    missingTags?: string[];
   };
 }
 
@@ -31,9 +33,23 @@ export const PetCard = ({ pet }: PetCardProps) => {
         {pet.tags && pet.tags.length > 0 && (
           <Styled.Tags>
             {pet.tags.map((tag) => (
-              <span key={tag} className="tag">{tag}</span>
+              <span
+                key={tag}
+                className={
+                  pet.matchTags && pet.matchTags.includes(tag)
+                    ? "tag found"
+                    : "tag"
+                }
+              >
+                {tag}
+              </span>
             ))}
           </Styled.Tags>
+        )}
+        {pet.missingTags && pet.missingTags.length > 0 && (
+          <p className="missing">
+            Não encontrado: {pet.missingTags.join(", ")}
+          </p>
         )}
       </Styled.Content>
     </Styled.Container>

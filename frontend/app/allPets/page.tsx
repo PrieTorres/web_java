@@ -1,10 +1,11 @@
 "use client";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, KeyboardEvent, useEffect, useState } from "react";
 import { Section } from "@/components/Section";
 import { LoadingSection } from "@/components/LoadingSection";
 import { PetCard } from "@/components/PetCard";
 import { fetchTk } from "@/lib/helper";
 import LocationSearchInput, { Suggestion } from "@/components/LocationSearchInput";
+import { TagChip } from "@/components/TagChip";
 import * as Styled from "@/components/PetFilter/styles";
 
 interface Pet {
@@ -14,6 +15,8 @@ interface Pet {
   tipo?: string;
   tags?: string[];
   imagem?: string;
+  matchTags?: string[];
+  missingTags?: string[];
 }
 
 export default function AllPetsPage() {
@@ -23,10 +26,11 @@ export default function AllPetsPage() {
     regiao: "",
     lat: "",
     lon: "",
-    raio: "",
+    raio: "10",
     tipo: "",
-    categorias: "",
   });
+  const [tagInput, setTagInput] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
 
   const tiposDeAnimais = [
     "Cachorro",
@@ -57,6 +61,34 @@ export default function AllPetsPage() {
     setFiltros((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleTagInput = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    if (value.endsWith(',')) {
+      const tag = value.slice(0, -1).trim();
+      if (tag && !tags.includes(tag)) {
+        setTags((prev) => [...prev, tag]);
+      }
+      setTagInput('');
+    } else {
+      setTagInput(value);
+    }
+  };
+
+  const handleTagKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const tag = tagInput.trim();
+      if (tag && !tags.includes(tag)) {
+        setTags((prev) => [...prev, tag]);
+      }
+      setTagInput('');
+    }
+  };
+
+  const removeTag = (tag: string) => {
+    setTags((prev) => prev.filter((t) => t !== tag));
+  };
+
   const handleRegionSelect = (s: Suggestion) => {
     setFiltros((prev) => ({
       ...prev,
@@ -75,11 +107,23 @@ export default function AllPetsPage() {
       params.append("raio", filtros.raio);
     }
     if (filtros.tipo) params.append("tipo", filtros.tipo);
-    if (filtros.categorias) params.append("categorias", filtros.categorias);
     const url = "/api/pets" + (params.toString() ? `?${params.toString()}` : "");
     fetchTk(url)
       .then((res) => res.json())
-      .then((data) => setPets(data))
+      .then((data: Pet[]) => {
+        const withScore = data.map((p) => {
+          const petTags = p.tags ?? [];
+          const matchTags = tags.filter((t) =>
+            petTags.some((pt) => pt.toLowerCase() === t.toLowerCase())
+          );
+          const missingTags = tags.filter(
+            (t) => !matchTags.some((m) => m.toLowerCase() === t.toLowerCase())
+          );
+          return { ...p, matchTags, missingTags, score: matchTags.length } as Pet & { score: number };
+        });
+        withScore.sort((a, b) => b.score - a.score);
+        setPets(withScore);
+      })
       .catch((err) => console.error("fetch pets", err))
       .finally(() => setLoading(false));
   };
@@ -98,24 +142,41 @@ export default function AllPetsPage() {
     <Section type="flex-list">
       <Styled.Form onSubmit={handleSubmit}>
         <LocationSearchInput value={filtros.regiao} onSelect={handleRegionSelect} />
-        <Styled.Input
-          name="raio"
-          placeholder="Raio em km"
-          value={filtros.raio}
-          onChange={handleChange}
-        />
+        <Styled.RangeWrapper>
+          <label>
+            Raio: {filtros.raio} km
+            <input
+              type="range"
+              name="raio"
+              min="1"
+              max="5000"
+              value={filtros.raio}
+              onChange={handleChange}
+            />
+          </label>
+        </Styled.RangeWrapper>
         <Styled.Select name="tipo" value={filtros.tipo} onChange={handleChange}>
           <option value="">Todos os tipos</option>
           {tiposDeAnimais.map((t) => (
             <option key={t} value={t}>{t}</option>
           ))}
         </Styled.Select>
-        <Styled.Input
-          name="categorias"
-          placeholder="Categorias separadas por vírgula"
-          value={filtros.categorias}
-          onChange={handleChange}
-        />
+        <Styled.TagInputWrapper>
+          <input
+            name="tags"
+            placeholder="Digite a tag e pressione , ou Enter"
+            value={tagInput}
+            onChange={handleTagInput}
+            onKeyDown={handleTagKeyDown}
+          />
+          {tags.length > 0 && (
+            <div className="tags">
+              {tags.map((t) => (
+                <TagChip key={t} label={t} onRemove={() => removeTag(t)} />
+              ))}
+            </div>
+          )}
+        </Styled.TagInputWrapper>
         <button type="submit">Filtrar</button>
       </Styled.Form>
       {loading ? (

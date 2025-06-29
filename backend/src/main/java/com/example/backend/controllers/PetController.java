@@ -36,8 +36,7 @@ public class PetController {
             @org.springframework.web.bind.annotation.RequestParam(required = false) Double lat,
             @org.springframework.web.bind.annotation.RequestParam(required = false) Double lng,
             @org.springframework.web.bind.annotation.RequestParam(required = false) Double raio,
-            @org.springframework.web.bind.annotation.RequestParam(required = false) String tipo,
-            @org.springframework.web.bind.annotation.RequestParam(required = false) String categorias
+            @org.springframework.web.bind.annotation.RequestParam(required = false) String tipo
     ) throws ExecutionException, InterruptedException {
         List<Map<String, Object>> pets = petService.findAll();
         if (lat != null && lng != null && raio != null) {
@@ -45,10 +44,6 @@ public class PetController {
         }
         if (tipo != null && !tipo.isBlank()) {
             pets = petService.filtrarPorTipo(pets, tipo);
-        }
-        if (categorias != null && !categorias.isBlank()) {
-            List<String> tags = java.util.Arrays.asList(categorias.split(","));
-            pets = petService.filtrarPorTags(pets, tags);
         }
         return ResponseEntity.ok(pets);
     }

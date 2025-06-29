@@ -45,3 +45,35 @@ export const Select = styled.select`
     width: 100%;
   `}
 `;
+
+export const RangeWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }: { theme: DefaultTheme }) => theme.spacings.xxsmall};
+
+  & input[type='range'] {
+    width: 100%;
+  }
+`;
+
+export const TagInputWrapper = styled.div`
+  ${({ theme }: { theme: DefaultTheme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.spacings.xsmall};
+
+    & input {
+      padding: ${theme.spacings.xsmall};
+      border-radius: ${theme.radius.small};
+      border: 1px solid ${theme.colors.borderColor};
+      background: ${theme.colors.mainBg};
+      color: ${theme.colors.secondaryColor};
+    }
+
+    & .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: ${theme.spacings.xsmall};
+    }
+  `}
+`;

@@ -99,21 +99,6 @@ public class PetService {
         return filtrados;
     }
 
-    public List<Map<String, Object>> filtrarPorTags(List<Map<String, Object>> pets, List<String> tags) {
-        List<Map<String, Object>> filtrados = new ArrayList<>();
-        for (Map<String, Object> pet : pets) {
-            Object tagsObj = pet.get("tags");
-            if (tagsObj instanceof List<?> list) {
-                for (Object tag : list) {
-                    if (tag != null && tags.stream().anyMatch(t -> t.equalsIgnoreCase(tag.toString()))) {
-                        filtrados.add(pet);
-                        break;
-                    }
-                }
-            }
-        }
-        return filtrados;
-    }
 
     private double distanciaKm(double lat1, double lon1, double lat2, double lon2) {
         double R = 6371.0; // km
