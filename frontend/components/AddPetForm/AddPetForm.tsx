@@ -3,6 +3,7 @@
 import { ChangeEvent, FormEvent, KeyboardEvent, useContext, useState, useEffect } from "react";
 import { PageContext } from "@/context/PageContext";
 import { useAlert } from "@/context/AlertContext";
+import { useRouter } from "next/navigation";
 import { fetchTk } from "@/lib/helper";
 import { Container } from "./styles";
 import { TagChip } from "../TagChip";
@@ -53,8 +54,9 @@ type FormState = {
 };
 
 export default function AddPetForm() {
-  const { token } = useContext(PageContext);
+  const { token, userId } = useContext(PageContext);
   const { showAlert } = useAlert();
+  const router = useRouter();
   const [form, setForm] = useState<FormState>({
     nome: "",
     descricao: "",
@@ -77,6 +79,13 @@ export default function AddPetForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
+
+  useEffect(() => {
+    if (!userId) {
+      showAlert("Usuário não autenticado", "error");
+      router.push("/login");
+    }
+  }, [userId, router, showAlert]);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -215,6 +224,12 @@ export default function AddPetForm() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    if (!userId) {
+      showAlert("Usuário não autenticado", "error");
+      router.push("/login");
+      setLoading(false);
+      return;
+    }
     if (!validateStep1()) {
       setLoading(false);
       return;
@@ -307,7 +322,7 @@ export default function AddPetForm() {
           <>
             <input
               name="nome"
-              placeholder="Nome"
+              placeholder="Nome *"
               value={form.nome}
               onChange={handleChange}
               required
@@ -327,14 +342,17 @@ export default function AddPetForm() {
               required
               className="input"
             >
-              <option value="">Selecione o tipo</option>
+              <option value="">Selecione o tipo *</option>
               {tiposDeAnimais.map((t) => (
                 <option key={t} value={t}>
                   {t}
                 </option>
               ))}
             </select>
-            <input type="file" name="imagem" onChange={handleImageChange} required className="input" />
+            <label>
+              Imagem *
+              <input type="file" name="imagem" onChange={handleImageChange} required className="input" />
+            </label>
             {imagePreview && (
               <div className="image-wrapper">
                 <img src={imagePreview} alt="Pré-visualização" className="preview" />
@@ -372,7 +390,7 @@ export default function AddPetForm() {
           <>
             <input
               name="cep"
-              placeholder="CEP"
+              placeholder="CEP *"
               value={form.cep}
               onChange={handleCepChange}
               required
@@ -380,7 +398,7 @@ export default function AddPetForm() {
             />
             <input
               name="pais"
-              placeholder="País"
+              placeholder="País *"
               value={form.pais}
               onChange={handleChange}
               required
@@ -388,7 +406,7 @@ export default function AddPetForm() {
             />
             <input
               name="estado"
-              placeholder="Estado"
+              placeholder="Estado *"
               value={form.estado}
               onChange={handleChange}
               required
@@ -396,7 +414,7 @@ export default function AddPetForm() {
             />
             <input
               name="cidade"
-              placeholder="Cidade"
+              placeholder="Cidade *"
               value={form.cidade}
               onChange={handleChange}
               required
@@ -404,7 +422,7 @@ export default function AddPetForm() {
             />
             <input
               name="bairro"
-              placeholder="Bairro"
+              placeholder="Bairro *"
               value={form.bairro}
               onChange={handleChange}
               required
@@ -412,7 +430,7 @@ export default function AddPetForm() {
             />
             <input
               name="rua"
-              placeholder="Rua"
+              placeholder="Rua *"
               value={form.rua}
               onChange={handleChange}
               required
@@ -420,7 +438,7 @@ export default function AddPetForm() {
             />
             <input
               name="numero"
-              placeholder="Número"
+              placeholder="Número *"
               value={form.numero}
               onChange={handleChange}
               required
