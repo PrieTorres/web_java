@@ -33,7 +33,6 @@ export const SafeImage = ({ src, text, width = 40, height, className, alt, onCli
       {!imageError ? (
         <div className={theme.isLight ? "invert" : "" + (className || "")}>
           <Image
-            className="grayscale"
             unoptimized
             src={src}
             alt={alt ?? text ?? "no description"}
