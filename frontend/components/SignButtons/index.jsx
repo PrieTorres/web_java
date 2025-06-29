@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { auth } from '@/lib/firebase';
 import { signOut as firebaseSignOut } from 'firebase/auth';
 import { PageContext } from '@/context/PageContext';
-import defaultIcon from "@/assets/img/default_user_photo.png";
+import defaultIcon from "@/public/assets/img/default_user_photo.png";
 import { useRouter } from 'next/navigation';
 import { SafeImage } from '../SafeImage';
 import { DropDown } from '../DropDown';

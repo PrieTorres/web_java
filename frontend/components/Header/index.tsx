@@ -6,8 +6,6 @@ import { SignButtons } from '../SignButtons';
 import { MainLogo } from '../MainLogo';
 import { useThemeContext } from '../Provider/Provider';
 
-
-
 export const Header = (): ReactElement => {
   const { isLight, changeTheme } = useThemeContext();
  

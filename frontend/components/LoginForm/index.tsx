@@ -1,8 +1,7 @@
 'use client';
 
 import { FormEvent, useState, useContext, useEffect } from 'react';
-import Image from 'next/image';
-import googleImage from '@/assets/google.svg';
+import googleImage from '@/public/assets/google.svg';
 import { useRouter } from 'next/navigation';
 import { loginUserWithGoogle } from '@/lib/api';
 import { getRedirectedUser } from '@/lib/firebase';

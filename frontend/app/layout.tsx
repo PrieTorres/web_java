@@ -13,6 +13,11 @@ console.log("Inter font loaded:", inter);
 export const metadata: Metadata = {
   title: "Adote um animalzinho!",
   description: "Encontre um novo amigo peludo",
+  icons: {
+    icon: "/assets/img/pets_icon.png",
+    apple:"/assets/img/pets_icon.png",
+    shortcut: "/assets/img/pets_icon.png",
+  },
 };
 
 export default function RootLayout({
