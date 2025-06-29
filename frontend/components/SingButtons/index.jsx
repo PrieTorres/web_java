@@ -8,6 +8,7 @@ import defaultIcon from "@/assets/img/default_user_photo.png";
 import { useRouter } from 'next/navigation';
 import { SafeImage } from '../SafeImage';
 import { DropDown } from '../DropDown';
+import { theme } from '@/styles/theme';
 
 
 export const SignButtons = () => {
@@ -60,7 +61,7 @@ export const SignButtons = () => {
 
   return (
     <Container>
-      <DropDown items={dropItems} dropDownId='user-menu' toggleId='toggle-user-menu'>
+      <DropDown items={dropItems} dropDownId='user-menu' toggleId='toggle-user-menu' style={{ background: theme.colors.mainBg}}>
         <SafeImage
           src={user?.photoURL ?? defaultIcon}
           width={37}

@@ -29,7 +29,14 @@ export default function MyPetsPage() {
     };
     fetchTk("/api/pets/me", { headers: { Authorization: token } })
       .then((res) => res.json())
-      .then((data) => setPets(data))
+      .then((data) => {
+        if(!Array.isArray(data)) {
+          console.error("Invalid response format", data);
+          return;
+        } else {
+          setPets(data);
+        }
+      })
       .catch((err) => console.error("fetch my pets", err))
       .finally(() => setLoading(false));
   }, [token]);
@@ -39,6 +46,9 @@ export default function MyPetsPage() {
       {loading ? (
         <LoadingSection />
       ) : (
+        pets.length === 0 ? (
+          <p>Nenhum pet encontrado.</p>
+        ) :
         pets.map((pet) => (
           <div key={pet.id}>
             <Link href={`/pet/${pet.id}`}>

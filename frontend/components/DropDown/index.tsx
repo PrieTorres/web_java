@@ -3,6 +3,7 @@ import { MouseEventHandler, ReactElement, ReactNode, useCallback, useEffect, use
 import { Container } from './styles';
 import { IconSpan } from '../IconSpan';
 import ClientPortal from '../Portal';
+import { theme } from '@/styles/theme';
 
 interface CustomStyling {
   top?: number;
@@ -41,6 +42,7 @@ export interface DropDownProps {
   toggleId: string;
   items: Array<DropItemProps>;
   height?: number;
+  style?: Styling;
 }
 
 const DropDownList = ({ isOpen, offset, dropDownId, toggleId, items, toggleFunction }: DropDownListProps) => {
@@ -59,7 +61,7 @@ const DropDownList = ({ isOpen, offset, dropDownId, toggleId, items, toggleFunct
         id={toggleId}
         className={`flex flex-col ${transClass}`}
       >
-        <ul aria-labelledby={dropDownId}>
+        <ul aria-labelledby={dropDownId} style={{ listStyle: "none" }}>
           {items.map((dropItem, i) => (
             <li
               key={`drop-item-${i}`}
@@ -82,7 +84,7 @@ const DropDownList = ({ isOpen, offset, dropDownId, toggleId, items, toggleFunct
   );
 };
 
-export const DropDown = ({ children, dropDownId, toggleId, items, height }: DropDownProps): ReactElement => {
+export const DropDown = ({ children, dropDownId, toggleId, items, height, style }: DropDownProps): ReactElement => {
   const [isOpen, setIsOpen] = useState(false);
   const [sizing, setSizing] = useState<Styling>({});
   const containerRef = useRef<HTMLDivElement>(null);
@@ -101,10 +103,12 @@ export const DropDown = ({ children, dropDownId, toggleId, items, height }: Drop
         left: rect.left,
         clientHeight: rect.height,
         width: containerRef.current.clientWidth,
-        background: window.getComputedStyle(containerRef.current).background,
+        background: window.getComputedStyle(containerRef.current).background ?? theme.colors.mainBg,
         padding: window.getComputedStyle(containerRef.current).padding,
         outline: window.getComputedStyle(containerRef.current?.parentElement as Element)?.border,
-        boxShadow: "0px 0px 8px 0px #000000d8 inset"
+        boxShadow: "0px 0px 8px 0px #000000d8 inset",
+        listStyle: "none",
+        ...(style || {}),
       };
 
       setSizing(styles);
