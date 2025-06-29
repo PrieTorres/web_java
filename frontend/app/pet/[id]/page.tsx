@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Section } from "@/components/Section";
 import { LoadingSection } from "@/components/LoadingSection";
@@ -8,32 +8,21 @@ import { Carousel } from "@/components/Carousel";
 import { TagChip } from "@/components/TagChip";
 import { fetchTk } from "@/lib/helper";
 import * as Styled from "./styles";
+import { Pet } from "@/types/pet";
 
-type Pet = {
-  id: string;
-  nome: string;
-  descricao?: string;
-  tipo?: string;
-  tags?: string[];
-  imagem?: string;
-  imagens?: string[];
-  localizacao?: Record<string, never>;
-  email?: string;
-  telefone?: string;
-};
-
-export default function PetPage({ params }: { params: { id: string } }) {
+export default function PetPageClient({ params }: { params: Promise<{ id: string }> }) {
   const [pet, setPet] = useState<Pet | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { id } = use(params);
 
   useEffect(() => {
-    fetchTk(`/api/pets/${params.id}`)
+    fetchTk(`/api/pets/${id}`)
       .then((res) => res.json())
       .then((data) => setPet(data))
       .catch((err) => console.error("fetch pet", err))
       .finally(() => setLoading(false));
-  }, [params.id]);
+  }, [id]);
 
   if (loading) return <LoadingSection />;
   if (!pet) return <Section>Pet não encontrado</Section>;
