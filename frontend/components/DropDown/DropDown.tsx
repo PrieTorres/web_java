@@ -45,7 +45,7 @@ export const DropDown = ({ children, dropDownId, toggleId, items, height, style 
   }, [isOpen, style]);
 
   return (
-    <Container height={height} ref={containerRef}>
+    <Container height={height} ref={containerRef} style={style}>
       <button
         id={dropDownId}
         data-dropdown-toggle={toggleId}

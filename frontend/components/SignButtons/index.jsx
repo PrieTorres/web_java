@@ -61,7 +61,12 @@ export const SignButtons = () => {
 
   return (
     <Container>
-      <DropDown items={dropItems} dropDownId='user-menu' toggleId='toggle-user-menu'>
+      <DropDown
+        items={dropItems}
+        dropDownId='user-menu'
+        toggleId='toggle-user-menu'
+        style={{ background: theme.colors.mainBg }}
+      >
         <SafeImage
           src={user?.photoURL ?? defaultIcon}
           width={37}
