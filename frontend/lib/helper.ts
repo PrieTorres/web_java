@@ -58,3 +58,21 @@ export async function getUserByFirebaseUserId({
   }
   return res.json();
 }
+
+export interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
+
+export function distanceKm(a: Coordinates, b: Coordinates): number {
+  const R = 6371; // raio da Terra em km
+  const lat1 = (a.latitude * Math.PI) / 180;
+  const lat2 = (b.latitude * Math.PI) / 180;
+  const dLat = lat2 - lat1;
+  const dLon = ((b.longitude - a.longitude) * Math.PI) / 180;
+  const h =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1) * Math.cos(lat2) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
