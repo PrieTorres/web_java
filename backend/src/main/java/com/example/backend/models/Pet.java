@@ -10,6 +10,8 @@ public class Pet {
     private Localizacao localizacao;
     private String userId;
     private String imagem;
+    private String email;
+    private String telefone;
 
     public String getNome() {
         return nome;
@@ -60,5 +62,21 @@ public class Pet {
 
     public void setImagem(String imagem) {
         this.imagem = imagem;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 }

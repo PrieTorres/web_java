@@ -41,7 +41,9 @@ export default function MyPetsPage() {
       ) : (
         pets.map((pet) => (
           <div key={pet.id}>
-            <PetCard pet={pet} />
+            <Link href={`/pet/${pet.id}`}>
+              <PetCard pet={pet} />
+            </Link>
             <Link href={`/editPet/${pet.id}`}>Editar</Link>
           </div>
         ))

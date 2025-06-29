@@ -17,6 +17,8 @@ export default function EditPetForm({ pet, token, onSuccess }: EditPetFormProps)
     descricao: pet.descricao || "",
     tipo: pet.tipo || "",
     tags: pet.tags || [],
+    email: pet.email || "",
+    telefone: pet.telefone || "",
     localizacao: {
       pais: pet.localizacao?.pais || "",
       estado: pet.localizacao?.estado || "",
@@ -106,6 +108,8 @@ export default function EditPetForm({ pet, token, onSuccess }: EditPetFormProps)
         <input name="localizacao.bairro" className="input" placeholder="Bairro" value={form.localizacao.bairro} onChange={handleChange} />
         <input name="localizacao.rua" className="input" placeholder="Rua" value={form.localizacao.rua} onChange={handleChange} />
         <input name="localizacao.numero" className="input" placeholder="Número" value={form.localizacao.numero} onChange={handleChange} />
+        <input name="email" className="input" placeholder="Email" type="email" value={form.email} onChange={handleChange} />
+        <input name="telefone" className="input" placeholder="Telefone" value={form.telefone} onChange={handleChange} />
         <input name="localizacao.cep" className="input" placeholder="CEP" value={form.localizacao.cep} onChange={handleChange} />
         <button type="submit" className="submit">Salvar</button>
       </form>

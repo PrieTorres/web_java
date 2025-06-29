@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Section } from "@/components/Section";
 import { LoadingSection } from "@/components/LoadingSection";
 import { PetCard } from "@/components/PetCard";
+import Link from "next/link";
 import { fetchTk } from "@/lib/helper";
 
 interface Pet {
@@ -31,7 +32,11 @@ export default function AllPetsPage() {
       {loading ? (
         <LoadingSection />
       ) : (
-        pets.map((pet, i) => <div key={pet.id ?? i}><PetCard pet={pet} /></div>)
+        pets.map((pet, i) => (
+          <Link href={`/pet/${pet.id}`} key={pet.id ?? i}>
+            <PetCard pet={pet} />
+          </Link>
+        ))
       )}
     </Section>
   );

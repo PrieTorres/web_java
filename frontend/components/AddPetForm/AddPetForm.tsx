@@ -39,6 +39,8 @@ type FormState = {
   descricao: string;
   tipo: string;
   tags: string[];
+  email: string;
+  telefone: string;
   pais: string;
   estado: string;
   cidade: string;
@@ -58,6 +60,8 @@ export default function AddPetForm() {
     descricao: "",
     tipo: "",
     tags: [],
+    email: "",
+    telefone: "",
     pais: "",
     estado: "",
     cidade: "",
@@ -207,6 +211,8 @@ export default function AddPetForm() {
       descricao: form.descricao,
       tipo: form.tipo,
       tags: form.tags,
+      email: form.email,
+      telefone: form.telefone,
       localizacao: {
         pais: form.pais,
         estado: form.estado,
@@ -239,6 +245,8 @@ export default function AddPetForm() {
           descricao: "",
           tipo: "",
           tags: [],
+          email: "",
+          telefone: "",
           pais: "",
           estado: "",
           cidade: "",
@@ -375,19 +383,36 @@ export default function AddPetForm() {
               required
               className="input"
             />
-            <input
-              name="numero"
-              placeholder="Número"
-              value={form.numero}
-              onChange={handleChange}
-              required
-              className="input"
-            />
-            <input
-              name="latitude"
-              placeholder="Latitude"
-              value={form.latitude}
-              readOnly
+        <input
+          name="numero"
+          placeholder="Número"
+          value={form.numero}
+          onChange={handleChange}
+          required
+          className="input"
+        />
+        <input
+          name="email"
+          placeholder="Email"
+          type="email"
+          value={form.email}
+          onChange={handleChange}
+          required
+          className="input"
+        />
+        <input
+          name="telefone"
+          placeholder="Telefone"
+          value={form.telefone}
+          onChange={handleChange}
+          required
+          className="input"
+        />
+        <input
+          name="latitude"
+          placeholder="Latitude"
+          value={form.latitude}
+          readOnly
               className="input"
             />
             <input

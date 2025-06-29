@@ -88,7 +88,7 @@ class PetControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(pet)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().json("{\"message\":\"Nome e localização são obrigatórios.\"}"));
+                .andExpect(content().json("{\"message\":\"Nome, tipo do animal, localização, latitude e longitude são obrigatórios.\"}"));
     }
 
     @Test
