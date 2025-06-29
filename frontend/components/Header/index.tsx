@@ -2,7 +2,7 @@
 import {  ReactElement } from 'react';
 import { Container } from './styles';
 import { Menu } from '../Menu';
-import { SignButtons } from '../SingButtons';
+import { SignButtons } from '../SignButtons';
 import { MainLogo } from '../MainLogo';
 import { useThemeContext } from '../Provider/Provider';
 
