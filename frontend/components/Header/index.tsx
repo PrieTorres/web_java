@@ -15,13 +15,13 @@ export const Header = (): ReactElement => {
         <div className="max-sm:hidden">
           <Menu />
         </div>
-        <div className='text-[1.5rem] flex gap-4 '>
+        <div className='text-[1.5rem] flex gap-2 '>
           <SignButtons  />
           <button   onClick={changeTheme}>{isLight ? "Dark 🌑" : "Light ☀"}</button>
         </div>
-        <div className="hidden max-sm:block" style={{ width: "100%" }}>
+        {/* <div className="hidden max-sm:block" style={{ width: "100%" }}>
           <Menu />
-        </div>
+        </div> */}
 
       </Container>
   );
