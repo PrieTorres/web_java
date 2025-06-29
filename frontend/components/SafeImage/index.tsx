@@ -27,7 +27,7 @@ export const SafeImage = ({ src, text, width = 40, height, className, alt, onCli
   const finalHeight = height ?? width;
 
   return (
-    <Container width={width} height={finalHeight}>
+    <Container style={{ width, height: finalHeight }}>
       {!imageError ? (
         <div className={className ?? ""}>
           <Image
