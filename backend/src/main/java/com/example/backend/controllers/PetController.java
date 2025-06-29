@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import com.example.backend.models.ApiError;
 import com.example.backend.models.Pet;
@@ -92,5 +93,30 @@ public class PetController {
         }
         List<Map<String, Object>> pets = petService.findByUserId(userId);
         return ResponseEntity.ok(pets);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizarPet(@PathVariable String id, @RequestBody Pet pet,
+            @RequestHeader("Authorization") String token) throws ExecutionException, InterruptedException {
+        String userId = tokenService.getUserId(token);
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiError("Token inválido"));
+        }
+        Map<String, Object> existingPet = petService.findById(id);
+        if (existingPet == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiError("Pet não encontrado"));
+        }
+        Object owner = existingPet.get("userId");
+        if (owner != null && !owner.equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ApiError("Usuário não autorizado"));
+        }
+        try {
+            pet.setUserId(userId);
+            petService.updatePet(id, pet);
+            return ResponseEntity.ok(Map.of("message", "Pet atualizado com sucesso!"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiError("Erro ao atualizar pet: " + e.getMessage()));
+        }
     }
 }
