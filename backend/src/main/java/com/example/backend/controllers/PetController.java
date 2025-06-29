@@ -32,8 +32,19 @@ public class PetController {
     private PetService petService;
 
     @GetMapping("")
-    public ResponseEntity<List<Map<String, Object>>> listarTodosPets() throws ExecutionException, InterruptedException {
+    public ResponseEntity<List<Map<String, Object>>> listarTodosPets(
+            @org.springframework.web.bind.annotation.RequestParam(required = false) Double lat,
+            @org.springframework.web.bind.annotation.RequestParam(required = false) Double lng,
+            @org.springframework.web.bind.annotation.RequestParam(required = false) Double raio,
+            @org.springframework.web.bind.annotation.RequestParam(required = false) String tipo
+    ) throws ExecutionException, InterruptedException {
         List<Map<String, Object>> pets = petService.findAll();
+        if (lat != null && lng != null && raio != null) {
+            pets = petService.filtrarPorLocalizacao(pets, lat, lng, raio);
+        }
+        if (tipo != null && !tipo.isBlank()) {
+            pets = petService.filtrarPorTipo(pets, tipo);
+        }
         return ResponseEntity.ok(pets);
     }
 

@@ -50,6 +50,16 @@ export const Content = styled.div`
       border-radius: ${theme.radius.small};
       font-size: 1.2rem;
     }
+
+    & .tag.found {
+      background: ${theme.colors.successColor};
+      color: ${theme.colors.mainBg};
+    }
+
+    & .missing {
+      color: ${theme.colors.dangerColor};
+      font-size: 1.2rem;
+    }
   `}
 `;
 

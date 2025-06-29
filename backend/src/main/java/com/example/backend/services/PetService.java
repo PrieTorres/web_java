@@ -69,4 +69,45 @@ public class PetService {
     public void updatePet(String id, Pet pet) throws Exception {
         db.collection("pets").document(id).set(pet, com.google.cloud.firestore.SetOptions.merge());
     }
+
+    public List<Map<String, Object>> filtrarPorLocalizacao(List<Map<String, Object>> pets, double lat, double lng, double raioKm) {
+        List<Map<String, Object>> filtrados = new ArrayList<>();
+        for (Map<String, Object> pet : pets) {
+            Object locObj = pet.get("localizacao");
+            if (locObj instanceof Map<?, ?> locMap) {
+                Object latObj = locMap.get("latitude");
+                Object lngObj = locMap.get("longitude");
+                if (latObj instanceof Number latN && lngObj instanceof Number lngN) {
+                    double dist = distanciaKm(lat, lng, latN.doubleValue(), lngN.doubleValue());
+                    if (dist <= raioKm) {
+                        filtrados.add(pet);
+                    }
+                }
+            }
+        }
+        return filtrados;
+    }
+
+    public List<Map<String, Object>> filtrarPorTipo(List<Map<String, Object>> pets, String tipo) {
+        List<Map<String, Object>> filtrados = new ArrayList<>();
+        for (Map<String, Object> pet : pets) {
+            Object t = pet.get("tipo");
+            if (t != null && tipo.equalsIgnoreCase(t.toString())) {
+                filtrados.add(pet);
+            }
+        }
+        return filtrados;
+    }
+
+
+    private double distanciaKm(double lat1, double lon1, double lat2, double lon2) {
+        double R = 6371.0; // km
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
 }
