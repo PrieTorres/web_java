@@ -5,8 +5,8 @@ import { responsiveFontSize } from '../../styles/helper';
 export const Container = styled.footer`
   ${({ theme }: { theme: DefaultTheme }) => css`
       min-height: ${theme.height.footerHeight};
-      background: ${theme.colors.black};
-      background: ${theme.gradient.darkGreyGradient};
+      background: ${theme.colors.mainBg};
+      color: ${theme.colors.secondaryColor};
       display: flex;
       flex-wrap: wrap;
       align-items: center;

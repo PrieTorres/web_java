@@ -10,10 +10,9 @@ export const Container = styled.header`
     height: ${theme.height.headerheight};
     min-width: fit-content;
     overflow: hidden;
-    color: ${theme.colors.mainColor};
+    color: ${theme.colors.secondaryColor};
     padding: ${theme.spacings.medium};
-    background: ${theme.colors.black};
-    background: ${theme.gradient.darkGreyGradient};
+    background: ${theme.colors.mainBg};
     box-shadow: 0 1px 20px rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
