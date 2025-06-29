@@ -35,7 +35,7 @@ export const Container = styled.div`
 `;
 
 export const Input = styled.input`
-  border: 1px solid #ccc;
+  border: 1px solid ${({ theme }) => theme.colors.lightGrey};
   padding: 12px;
   width: 100%;
   border-radius: 6px;

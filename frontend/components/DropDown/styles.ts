@@ -17,7 +17,7 @@ export const Container = styled.div<ContainerProps>`
     border-top-right-radius: 4px;
     border-top-left-radius: 4px;
     margin: 0px 5px;
-    box-shadow: 0px 0px 8px 0px #000000d8 inset;
+    box-shadow: 0px 0px 8px 0px ${theme.colors.shadowColor} inset;
 
     & button {
       display: flex;

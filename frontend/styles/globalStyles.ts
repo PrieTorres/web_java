@@ -30,7 +30,6 @@ export const GlobalStyles = createGlobalStyle`
     ${({ theme }) => css`
       font-family: "Montserrat", sans-serif;
       font-size: 1.8rem !important;
-      background: #222;
       background: ${theme.colors.mainBg};
       color: ${theme.colors.secondaryColor}
       font-family: ${({ theme }) => theme.font.family.default};
