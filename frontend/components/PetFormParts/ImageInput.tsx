@@ -1,5 +1,6 @@
 "use client";
 import { ChangeEvent } from "react";
+import Image from "next/image";
 
 export interface ImageInputProps {
   previews: string[];
@@ -13,7 +14,14 @@ export default function ImageInput({ previews, onChange }: ImageInputProps) {
       {previews.length > 0 && (
         <div className="image-wrapper">
           {previews.map((src, i) => (
-            <img key={i} src={src} alt="Pré-visualização" className="preview" />
+            <Image
+              key={i}
+              src={src}
+              alt="Pré-visualização"
+              className="preview"
+              width={100}
+              height={100}
+            />
           ))}
         </div>
       )}
