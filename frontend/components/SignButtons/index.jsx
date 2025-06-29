@@ -8,12 +8,13 @@ import defaultIcon from "@/assets/img/default_user_photo.png";
 import { useRouter } from 'next/navigation';
 import { SafeImage } from '../SafeImage';
 import { DropDown } from '../DropDown';
-import { theme } from '@/styles/theme';
+import { useTheme } from 'styled-components';
 
 
 export const SignButtons = () => {
   const { updateSessionId, updateToken, updateUser, userId, user } = useContext(PageContext);
   const router = useRouter();
+  const theme = useTheme();
 
 
   function handleSignOut() {
@@ -41,7 +42,16 @@ export const SignButtons = () => {
   if (!userId) {
     return (
       <Container>
-        <button type='button' onClick={handleSignIn} className='black_btn'>
+        <button
+          type='button'
+          onClick={handleSignIn}
+          style={{
+            background: theme.colors.blueGray,
+            color: theme.colors.white,
+            padding: '0.8rem 1.6rem',
+            borderRadius: theme.radius.default,
+          }}
+        >
           Sign in
         </button>
       </Container>

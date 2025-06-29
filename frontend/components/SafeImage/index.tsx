@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Container } from "./styles";
 import Image, { StaticImageData } from "next/image";
 import { TranslatedSpan } from "../TranslatedSpan";
-import { useThemeContext } from "../Provider/Provider";
 
 export interface SafeImageProps {
   src: string | StaticImageData;
@@ -25,13 +24,12 @@ export interface SafeImageProps {
 
 export const SafeImage = ({ src, text, width = 40, height, className, alt, onClick }: SafeImageProps) => {
   const [imageError, setImageError] = useState(false);
-  const theme = useThemeContext();
   const finalHeight = height ?? width;
 
   return (
     <Container width={width} height={finalHeight}>
       {!imageError ? (
-        <div className={theme.isLight ? "invert" : "" + (className || "")}>
+        <div className={className ?? ""}>
           <Image
             unoptimized
             src={src}

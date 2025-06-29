@@ -3,13 +3,14 @@ import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { Container } from './styles';
 import { IconSpan } from '../IconSpan';
 import { DropDownProps, Styling } from './types';
-import { theme } from '@/styles/theme';
+import { useTheme } from 'styled-components';
 import { DropDownList } from './DropDownList';
 
 export const DropDown = ({ children, dropDownId, toggleId, items, height, style }: DropDownProps): ReactElement => {
   const [isOpen, setIsOpen] = useState(false);
   const [sizing, setSizing] = useState<Styling>({});
   const containerRef = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
 
   const toggle = useCallback(() => {
     setIsOpen(prev => !prev);
@@ -28,7 +29,7 @@ export const DropDown = ({ children, dropDownId, toggleId, items, height, style 
         background: window.getComputedStyle(containerRef.current).background ?? theme.colors.mainBg,
         padding: window.getComputedStyle(containerRef.current).padding,
         outline: window.getComputedStyle(containerRef.current?.parentElement as Element)?.border,
-        boxShadow: '0px 0px 8px 0px #000000d8 inset',
+        boxShadow: `0px 0px 8px 0px ${theme.colors.shadowColor} inset`,
         listStyle: 'none',
         ...(style || {}),
       };
