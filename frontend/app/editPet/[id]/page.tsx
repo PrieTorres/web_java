@@ -1,22 +1,13 @@
 "use client";
 import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import type { PageProps } from "next";
 import { PageContext } from "@/context/PageContext";
 import { fetchTk } from "@/lib/helper";
 import EditPetForm from "@/components/EditPetForm/EditPetForm";
+import type { Pet } from "@/types/pet";
 
-interface Pet {
-  id: string;
-  nome: string;
-  descricao?: string;
-  tipo?: string;
-  tags?: string[];
-  imagem?: string;
-  imagens?: string[];
-  localizacao?: Record<string, never>;
-}
-
-export default function EditPetPage({ params }: { params: { id: string } }) {
+export default function EditPetPage({ params }: PageProps<{ id: string }>) {
   const { token } = useContext(PageContext);
   const [pet, setPet] = useState<Pet | null>(null);
   const router = useRouter();

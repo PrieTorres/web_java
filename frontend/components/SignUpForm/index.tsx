@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { PageContext } from "@/context/PageContext";
 import { getUserByFirebaseUserId } from "@/lib/helper";
 import { LoadingSpin } from "@/components/LoadingSpin";
-import { signInWithGoogle, auth, getRedirectedUser } from "@/lib/firebase";
+import { signInWithGoogle, getRedirectedUser } from "@/lib/firebase";
 import googleImage from "@/public/assets/google.svg";
 import Image from "next/image";
 import Link from "next/link";
