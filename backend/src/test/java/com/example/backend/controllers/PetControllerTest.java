@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.backend.models.Pet;
+import com.example.backend.models.Localizacao;
 import com.example.backend.services.PetService;
 import com.example.backend.services.TokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
