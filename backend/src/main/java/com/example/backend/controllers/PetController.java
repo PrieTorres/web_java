@@ -10,11 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import com.example.backend.models.ApiError;
 import com.example.backend.models.Pet;
@@ -66,13 +66,11 @@ public class PetController {
     @PostMapping
     public ResponseEntity<?> adicionarPet(@RequestBody Pet pet,
             @RequestHeader("Authorization") String token) {
-        if (
-            pet.getNome() == null || 
-            pet.getNome().isBlank() || 
-            pet.getLocalizacao() == null || 
-            pet.getTipo() == null ||
-            pet.getTipo().isBlank()
-        ) {
+        if (pet.getNome() == null
+                || pet.getNome().isBlank()
+                || pet.getLocalizacao() == null
+                || pet.getTipo() == null
+                || pet.getTipo().isBlank()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ApiError("Nome, tipo do animal, localização, latitude e longitude são obrigatórios."));
         }
@@ -110,6 +108,14 @@ public class PetController {
         String userId = tokenService.getUserId(token);
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiError("Token inválido"));
+        }
+        if (pet.getNome() == null
+                || pet.getNome().isBlank()
+                || pet.getLocalizacao() == null
+                || pet.getTipo() == null
+                || pet.getTipo().isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiError("Nome, tipo do animal, localização, latitude e longitude são obrigatórios."));
         }
         Map<String, Object> existingPet = petService.findById(id);
         if (existingPet == null) {
