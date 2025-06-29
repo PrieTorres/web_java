@@ -2,6 +2,7 @@
 
 import { ChangeEvent, FormEvent, KeyboardEvent, useContext, useState, useEffect } from "react";
 import { PageContext } from "@/context/PageContext";
+import { useAlert } from "@/context/AlertContext";
 import { fetchTk } from "@/lib/helper";
 import { Container } from "./styles";
 import { TagChip } from "../TagChip";
@@ -53,6 +54,7 @@ type FormState = {
 
 export default function AddPetForm() {
   const { token } = useContext(PageContext);
+  const { showAlert } = useAlert();
   const [form, setForm] = useState<FormState>({
     nome: "",
     descricao: "",
@@ -113,12 +115,45 @@ export default function AddPetForm() {
     setForm((prev) => ({ ...prev, tags: prev.tags.filter((t) => t !== tag) }));
   };
 
+  const validateStep1 = () => {
+    if (!form.nome || !form.tipo || !form.imagem) {
+      showAlert("Preencha todos os campos obrigatórios do passo 1.");
+      return false;
+    }
+    if (form.imagem) {
+      if (!form.imagem.type.startsWith("image/")) {
+        showAlert("Formato de imagem inválido.");
+        return false;
+      }
+      if (form.imagem.size > MAX_FILE_SIZE) {
+        showAlert("Imagem excede o limite de 100MB.");
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
-    setForm((prev) => ({ ...prev, imagem: file }));
     if (file) {
+      if (!file.type.startsWith("image/")) {
+        showAlert("Formato de imagem inválido.");
+        e.target.value = "";
+        setForm((prev) => ({ ...prev, imagem: null }));
+        setImagePreview(null);
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        showAlert("Imagem excede o limite de 100MB.");
+        e.target.value = "";
+        setForm((prev) => ({ ...prev, imagem: null }));
+        setImagePreview(null);
+        return;
+      }
+      setForm((prev) => ({ ...prev, imagem: file }));
       setImagePreview(URL.createObjectURL(file));
     } else {
+      setForm((prev) => ({ ...prev, imagem: null }));
       setImagePreview(null);
     }
   };
@@ -180,14 +215,13 @@ export default function AddPetForm() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    if (!validateStep1()) {
+      setLoading(false);
+      return;
+    }
     await updateCoordinates();
     let imagemUrl: string | undefined = undefined;
     if (form.imagem) {
-      if (form.imagem.size > MAX_FILE_SIZE) {
-        alert("Imagem excede o limite de 100MB.");
-        setLoading(false);
-        return;
-      }
       if (!auth.currentUser) {
         try {
           await signInAnonymously(auth);
@@ -232,8 +266,9 @@ export default function AddPetForm() {
       if (!res.ok) {
         const text = await res.text();
         setError("Erro ao cadastrar pet: " + text);
+        showAlert("Erro ao cadastrar pet", "error");
       } else {
-        alert("Pet cadastrado com sucesso!");
+        showAlert("Pet cadastrado com sucesso!", "success");
         setForm({
           nome: "",
           descricao: "",
@@ -257,6 +292,7 @@ export default function AddPetForm() {
     } catch (err) {
       console.error("handleSubmit", err);
       setError("Erro ao cadastrar pet");
+      showAlert("Erro ao cadastrar pet", "error");
     } finally {
       setLoading(false);
     }
@@ -288,6 +324,7 @@ export default function AddPetForm() {
               name="tipo"
               value={form.tipo}
               onChange={handleChange}
+              required
               className="input"
             >
               <option value="">Selecione o tipo</option>
@@ -297,7 +334,7 @@ export default function AddPetForm() {
                 </option>
               ))}
             </select>
-            <input type="file" name="imagem" onChange={handleImageChange} className="input" />
+            <input type="file" name="imagem" onChange={handleImageChange} required className="input" />
             {imagePreview && (
               <div className="image-wrapper">
                 <img src={imagePreview} alt="Pré-visualização" className="preview" />
@@ -320,7 +357,13 @@ export default function AddPetForm() {
                 </div>
               )}
             </div>
-            <button type="button" onClick={() => setStep(2)} className="nav">
+            <button
+              type="button"
+              onClick={() => {
+                if (validateStep1()) setStep(2);
+              }}
+              className="nav"
+            >
               Próximo
             </button>
           </>
