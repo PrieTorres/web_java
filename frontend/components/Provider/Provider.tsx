@@ -37,7 +37,7 @@ export const Provider = ({ children }: { children: ReactNode }): ReactElement =>
     }
   }, []);
   useEffect(() => {
-    setCurrentTheme(isLight ? themeLight : theme);
+    return setCurrentTheme(isLight ? themeLight : theme);
   }, [isLight]);
 
 
