@@ -65,4 +65,8 @@ public class PetService {
         data.put("id", doc.getId());
         return data;
     }
+
+    public void updatePet(String id, Pet pet) throws Exception {
+        db.collection("pets").document(id).set(pet, com.google.cloud.firestore.SetOptions.merge());
+    }
 }

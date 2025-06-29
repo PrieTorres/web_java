@@ -15,7 +15,7 @@ export const Menu = () => {
     {
       children: "pets para adoção",
       link: "/allPets",
-    },
+    }
   ];
 
   return (

@@ -8,6 +8,7 @@ import { signOut as firebaseSignOut } from 'firebase/auth';
 import { PageContext } from '@/context/PageContext';
 import defaultIcon from "@/assets/img/default_user_photo.png";
 import { useRouter } from 'next/navigation';
+import { SafeImage } from '../SafeImage';
 
 
 export const SignButtons = () => {
@@ -53,7 +54,7 @@ export const SignButtons = () => {
             </button>
 
             <Link href='/profile' className='sm:flex hidden' style={{ alignContent: "center", alignItems: "center" }} >
-              <Image
+              <SafeImage
                 src={user?.photoURL ?? defaultIcon}
                 width={37}
                 height={37}
@@ -77,7 +78,7 @@ export const SignButtons = () => {
       <div className='sm:hidden flex relative'>
         {userId ? (
           <div className='flex flex-col items-end'>
-            <Image
+            <SafeImage
               src={user?.photoURL ?? defaultIcon}
               width={37}
               height={37}
@@ -89,7 +90,7 @@ export const SignButtons = () => {
             {toggleDropdown && (
               <div className='dropdown text-center'>
                 <Link
-                  href='/profile'
+                  href='/myPets'
                   className='dropdown_link'
                   onClick={() => setToggleDropdown(false)}
                 >
