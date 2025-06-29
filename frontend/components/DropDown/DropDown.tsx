@@ -43,7 +43,7 @@ export const DropDown = ({ children, dropDownId, toggleId, items, height, style 
     return () => {
       window.removeEventListener('resize', defineDropListSizing);
     };
-  }, [isOpen, style]);
+  }, [isOpen, style, theme.colors.mainBg, theme.colors.shadowColor]);
 
   return (
     <Container height={height} ref={containerRef} style={style}

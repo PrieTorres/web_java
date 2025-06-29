@@ -13,7 +13,7 @@ interface Pet {
   tags?: string[];
   imagem?: string;
   imagens?: string[];
-  localizacao?: Record<string, any>;
+  localizacao?: Record<string, never>;
 }
 
 export default function EditPetPage({ params }: { params: { id: string } }) {

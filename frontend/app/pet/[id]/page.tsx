@@ -17,7 +17,7 @@ type Pet = {
   tags?: string[];
   imagem?: string;
   imagens?: string[];
-  localizacao?: Record<string, any>;
+  localizacao?: Record<string, never>;
   email?: string;
   telefone?: string;
 };
