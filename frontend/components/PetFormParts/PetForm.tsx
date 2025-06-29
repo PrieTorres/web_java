@@ -9,6 +9,7 @@ import ContactInputs from "./ContactInputs";
 import { storage, auth } from "@/lib/firebase";
 import { LoadingSpin } from "../LoadingSpin";
 import { Container } from "../AddPetForm/styles";
+import { useAlert } from "@/context/AlertContext";
 
 export interface FormState {
   nome: string;
@@ -99,6 +100,7 @@ export default function PetForm({
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { showAlert } = useAlert();
   const MAX_FILE_SIZE = 100 * 1024 * 1024;
 
   const handleChange = (
@@ -207,7 +209,7 @@ export default function PetForm({
     let imagemUrl: string | undefined = imageUrl ?? undefined;
     if (form.imagem) {
       if (form.imagem.size > MAX_FILE_SIZE) {
-        alert("Imagem excede o limite de 100MB.");
+        showAlert("Imagem excede o limite de 100MB.", "error");
         setLoading(false);
         return;
       }
@@ -255,7 +257,7 @@ export default function PetForm({
         const text = await res.text();
         setError(`Erro ao ${method === "POST" ? "cadastrar" : "atualizar"} pet: ` + text);
       } else {
-        alert(`Pet ${method === "POST" ? "cadastrado" : "atualizado"} com sucesso!`);
+        showAlert(`Pet ${method === "POST" ? "cadastrado" : "atualizado"} com sucesso!`, "success");
         if (resetOnSuccess) {
           setForm(defaultForm);
           setTagInput("");
