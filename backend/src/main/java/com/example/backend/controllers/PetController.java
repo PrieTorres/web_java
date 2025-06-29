@@ -66,17 +66,20 @@ public class PetController {
     @PostMapping
     public ResponseEntity<?> adicionarPet(@RequestBody Pet pet,
             @RequestHeader("Authorization") String token) {
-        if (pet.getNome() == null
-                || pet.getNome().isBlank()
-                || pet.getLocalizacao() == null
-                || pet.getTipo() == null
-                || pet.getTipo().isBlank()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiError("Nome, tipo do animal, localização, latitude e longitude são obrigatórios."));
-        }
         String userId = tokenService.getUserId(token);
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiError("Token inválido"));
+        }
+
+        if (
+            pet.getNome() == null ||
+            pet.getNome().isBlank() ||
+            pet.getLocalizacao() == null ||
+            pet.getTipo() == null ||
+            pet.getTipo().isBlank()
+        ) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiError("Nome, tipo do animal, localização, latitude e longitude são obrigatórios."));
         }
         try {
             pet.setUserId(userId);

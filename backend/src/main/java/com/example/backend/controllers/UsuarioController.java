@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import com.example.backend.models.ApiError;
 import com.example.backend.services.TokenService;
@@ -28,31 +29,36 @@ import com.google.firebase.cloud.FirestoreClient;
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
 
-    Firestore db = FirestoreClient.getFirestore();
+    @Autowired
+    private Firestore db;
     @Autowired
     private TokenService tokenService;
 
-    @PostMapping("/{userId}")
-    public String salvarOuAtualizarUsuario(@PathVariable String userId, @RequestBody Map<String, Object> usuario) {
+    @PutMapping("/{userId}")
+    public ResponseEntity<?> salvarOuAtualizarUsuario(@PathVariable String userId, @RequestBody Map<String, Object> usuario) {
         try {
             db.collection("usuarios").document(userId).set(usuario);
-            return "Usuário salvo/atualizado com sucesso!";
+            return ResponseEntity.ok(Map.of("message", "Usuário salvo/atualizado com sucesso!"));
         } catch (Exception e) {
-            return "Erro ao salvar usuário: " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiError("Erro ao salvar usuário: " + e.getMessage()));
         }
     }
 
     @GetMapping("/{userId}")
-    public Map<String, Object> obterUsuario(@PathVariable String userId) throws ExecutionException, InterruptedException {
+    public ResponseEntity<?> obterUsuario(@PathVariable String userId) throws ExecutionException, InterruptedException {
         DocumentSnapshot snapshot = db.collection("usuarios").document(userId).get().get();
         if (snapshot.exists()) {
-            return snapshot.getData();
-        } else {
-            throw new RuntimeException("Usuário não encontrado");
+            Map<String, Object> data = snapshot.getData();
+            if (data == null) {
+                data = new HashMap<>();
+            }
+            return ResponseEntity.ok(data);
         }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiError("Usuário não encontrado"));
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<?> addData(@RequestBody Map<String, Object> data) {
         try {
             String email = (String) data.get("email");

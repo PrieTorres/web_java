@@ -1,6 +1,7 @@
 package com.example.backend.controllers;
 
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -19,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.backend.models.Pet;
+import com.example.backend.models.Localizacao;
 import com.example.backend.services.PetService;
 import com.example.backend.services.TokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,6 +54,12 @@ class PetControllerTest {
     @Test
     void testAdicionarPetUnauthorized() throws Exception {
         Pet pet = new Pet();
+        pet.setNome("Rex");
+        pet.setTipo("Cachorro");
+        Localizacao loc = new Localizacao();
+        loc.setLatitude(1);
+        loc.setLongitude(1);
+        pet.setLocalizacao(loc);
         when(tokenService.getUserId("bad")).thenReturn(null);
 
         mockMvc.perform(post("/api/pets")
@@ -66,9 +74,13 @@ class PetControllerTest {
     void testAdicionarPetSuccess() throws Exception {
         Pet pet = new Pet();
         pet.setNome("Rex");
-        pet.setLocalizacao(new com.example.backend.models.Localizacao());
+        pet.setTipo("Cachorro");
+        Localizacao loc = new Localizacao();
+        loc.setLatitude(1);
+        loc.setLongitude(1);
+        pet.setLocalizacao(loc);
         when(tokenService.getUserId("good")).thenReturn("uid1");
-        when(petService.addPet(pet)).thenReturn("pid1");
+        when(petService.addPet(any(Pet.class))).thenReturn("pid1");
 
         mockMvc.perform(post("/api/pets")
                 .header("Authorization", "good")
