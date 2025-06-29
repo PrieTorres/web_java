@@ -30,6 +30,12 @@ export const Container = styled.div<ContainerProps>`
       text-align: left;
     }
 
+    & ul,
+    & li,
+    & ol {
+      list-style: none;
+    }
+
     & ul {
       padding: ${theme.spacings.small}
     }
