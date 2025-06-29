@@ -1,8 +1,9 @@
 "use client";
 import PetForm from "../PetFormParts/PetForm";
+import { Pet } from "../../types/pet";
 
 export interface EditPetFormProps {
-  pet: any;
+  pet: Pet;
   token: string;
   onSuccess?: () => void;
 }

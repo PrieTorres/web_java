@@ -206,7 +206,7 @@ export default function PetForm({
     setLoading(true);
     setError(null);
     await updateCoordinates();
-    let imageUrls: string[] = imageUrl ? [imageUrl] : [];
+    const imageUrls: string[] = imageUrl ? [imageUrl] : [];
     if (form.imagens.length > 0) {
       if (!auth.currentUser) {
         try {

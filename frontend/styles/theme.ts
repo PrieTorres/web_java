@@ -1,3 +1,4 @@
+import { DefaultTheme } from "styled-components";
 import { Colors } from "./COLORS";
 
 export const theme = {
@@ -93,7 +94,7 @@ export const theme = {
   transitions: {
     default: "all .5s ease"
   }
-} as const;
+} as DefaultTheme;
 
 export const themeLight = {
   ...theme,
@@ -110,4 +111,4 @@ export const themeLight = {
     ...theme.gradient,
     darkGreyGradient: "rgba(255, 255, 255, 0.6)",
   },
-} as const;
+} as DefaultTheme;

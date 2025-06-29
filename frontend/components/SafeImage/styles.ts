@@ -4,12 +4,13 @@ interface ContainerProps {
   theme: DefaultTheme;
   width?: number;
   height?: number;
+  style?: React.CSSProperties;
 }
 
 export const Container = styled.div`
-  ${({ width, height }: ContainerProps) => css`
-    width: ${width ? `${width}px` : 'fit-content'};
-    height: ${height ? `${height}px` : '100%'};
+  ${({ style }: ContainerProps) => css`
+    width: ${style?.width ? `${style?.width}px` : 'fit-content'};
+    height: ${style?.height ? `${style?.height}px` : '100%'};
     display: flex;
     align-items: center;
 
