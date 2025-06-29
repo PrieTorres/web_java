@@ -50,6 +50,8 @@ firebase init
 firebase deploy
 
 ```
+A documentacao Swagger pode ser acessada em http://localhost:8080/swagger-ui/index.html
+
 
 ### ⚙️ Configurar Firebase
 
