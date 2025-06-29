@@ -27,7 +27,7 @@ export interface FormState {
   cep: string;
   latitude: string;
   longitude: string;
-  imagem: File | null;
+  imagens: File[];
 }
 
 export interface PetFormProps {
@@ -81,7 +81,7 @@ const defaultForm: FormState = {
   cep: "",
   latitude: "",
   longitude: "",
-  imagem: null,
+  imagens: [],
 };
 
 export default function PetForm({
@@ -95,7 +95,7 @@ export default function PetForm({
   resetOnSuccess = false,
 }: PetFormProps) {
   const [form, setForm] = useState<FormState>({ ...defaultForm, ...initialData });
-  const [imagePreview, setImagePreview] = useState<string | null>(imageUrl ?? null);
+  const [imagePreviews, setImagePreviews] = useState<string[]>(imageUrl ? [imageUrl] : []);
   const [tagInput, setTagInput] = useState("");
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -139,12 +139,12 @@ export default function PetForm({
   };
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] ?? null;
-    setForm((prev) => ({ ...prev, imagem: file }));
-    if (file) {
-      setImagePreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files ?? []).slice(0, 10);
+    setForm((prev) => ({ ...prev, imagens: files }));
+    if (files.length > 0) {
+      setImagePreviews(files.map((f) => URL.createObjectURL(f)));
     } else {
-      setImagePreview(imageUrl ?? null);
+      setImagePreviews(imageUrl ? [imageUrl] : []);
     }
   };
 
@@ -206,13 +206,8 @@ export default function PetForm({
     setLoading(true);
     setError(null);
     await updateCoordinates();
-    let imagemUrl: string | undefined = imageUrl ?? undefined;
-    if (form.imagem) {
-      if (form.imagem.size > MAX_FILE_SIZE) {
-        showAlert("Imagem excede o limite de 100MB.", "error");
-        setLoading(false);
-        return;
-      }
+    let imageUrls: string[] = imageUrl ? [imageUrl] : [];
+    if (form.imagens.length > 0) {
       if (!auth.currentUser) {
         try {
           await signInAnonymously(auth);
@@ -220,9 +215,17 @@ export default function PetForm({
           console.error("Firebase anonymous sign-in failed", err);
         }
       }
-      const storageRef = ref(storage, `pets/${Date.now()}_${form.imagem.name}`);
-      await uploadBytes(storageRef, form.imagem);
-      imagemUrl = await getDownloadURL(storageRef);
+      for (const file of form.imagens) {
+        if (file.size > MAX_FILE_SIZE) {
+          showAlert("Imagem excede o limite de 100MB.", "error");
+          setLoading(false);
+          return;
+        }
+        const storageRef = ref(storage, `pets/${Date.now()}_${file.name}`);
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        imageUrls.push(url);
+      }
     }
     const petData = {
       nome: form.nome,
@@ -242,7 +245,8 @@ export default function PetForm({
         latitude: Number(form.latitude),
         longitude: Number(form.longitude),
       },
-      imagem: imagemUrl,
+      imagem: imageUrls[0],
+      imagens: imageUrls,
     };
     try {
       const res = await fetchTk(apiPath, {
@@ -262,7 +266,7 @@ export default function PetForm({
           setForm(defaultForm);
           setTagInput("");
           setStep(1);
-          setImagePreview(null);
+          setImagePreviews([]);
         }
         if (onSuccess) onSuccess();
       }
@@ -304,7 +308,7 @@ export default function PetForm({
                 </option>
               ))}
             </select>
-            <ImageInput preview={imagePreview} onChange={handleImageChange} />
+            <ImageInput previews={imagePreviews} onChange={handleImageChange} />
             <TagInputList
               tags={form.tags}
               tagInput={tagInput}

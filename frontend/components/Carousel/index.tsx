@@ -14,15 +14,15 @@ export const Carousel = ({ items, bottomComponent }: CarouselProps): ReactElemen
 
   return (
     <Container>
-      <div>
-        {items[index]}
-      </div>
-      <CarouselSelector 
-        indexCarousel={index}
-        setIndex={setIndex}
-        itemsLength={max}
-      />
+      <div>{items[index]}</div>
+      {max > 1 && (
+        <CarouselSelector
+          indexCarousel={index}
+          setIndex={setIndex}
+          itemsLength={max}
+        />
+      )}
       {bottomComponent}
     </Container>
-  )
+  );
 };
