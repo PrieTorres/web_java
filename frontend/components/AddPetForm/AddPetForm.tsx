@@ -7,6 +7,7 @@ import { Container } from "./styles";
 import { storage, auth } from "@/lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { signInAnonymously } from "firebase/auth";
+import { LoadingSpin } from "../LoadingSpin";
 
 const tiposDeAnimais = [
   "Cachorro",
@@ -68,6 +69,8 @@ export default function AddPetForm() {
     imagem: null,
   });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
   const handleChange = (
@@ -142,11 +145,14 @@ export default function AddPetForm() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
     await updateCoordinates();
     let imagemUrl: string | undefined = undefined;
     if (form.imagem) {
       if (form.imagem.size > MAX_FILE_SIZE) {
         alert("Imagem excede o limite de 100MB.");
+        setLoading(false);
         return;
       }
       if (!auth.currentUser) {
@@ -195,7 +201,7 @@ export default function AddPetForm() {
       });
       if (!res.ok) {
         const text = await res.text();
-        alert("Erro ao cadastrar pet: " + text);
+        setError("Erro ao cadastrar pet: " + text);
       } else {
         alert("Pet cadastrado com sucesso!");
         setForm({
@@ -218,7 +224,9 @@ export default function AddPetForm() {
       }
     } catch (err) {
       console.error("handleSubmit", err);
-      alert("Erro ao cadastrar pet");
+      setError("Erro ao cadastrar pet");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -334,8 +342,9 @@ export default function AddPetForm() {
           readOnly
           className="input"
         />
-        <button type="submit" className="submit">
-          Cadastrar
+        {error && <p className="danger-text">{error}</p>}
+        <button type="submit" className="submit" disabled={loading}>
+          {loading ? <LoadingSpin /> : "Cadastrar"}
         </button>
       </form>
     </Container>
