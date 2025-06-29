@@ -96,5 +96,18 @@ export const theme = {
 } as const;
 
 export const themeLight = {
-  ...theme
+  ...theme,
+  colors: {
+    ...theme.colors,
+    mainBg: Colors.white,
+    mainColor: Colors.black,
+    secondaryBg: Colors.lightGray,
+    secondaryBgDarker: Colors.darkGray,
+    secondaryColor: Colors.black,
+    borderColor: Colors.lightGrey,
+  },
+  gradient: {
+    ...theme.gradient,
+    darkGreyGradient: "rgba(255, 255, 255, 0.6)",
+  },
 } as const;

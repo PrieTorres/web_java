@@ -30,14 +30,12 @@ export const Provider = ({ children }: { children: ReactNode }): ReactElement =>
   const [currentTheme, setCurrentTheme] = useState<DefaultTheme>(theme);
 
   const [isLight, setIsLight] = useState<boolean>(false);
-
-  // useEffect(() => {
-  //   setMounted(true);
-  //   const savedTheme = localStorage.getItem("IsLight");
-  //   if (savedTheme) {
-  //     setIsLight(JSON.parse(savedTheme));
-  //   }
-  // }, []);
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("IsLight");
+    if (savedTheme) {
+      setIsLight(JSON.parse(savedTheme));
+    }
+  }, []);
   useEffect(() => {
     setCurrentTheme(isLight ? themeLight : theme);
   }, [isLight]);

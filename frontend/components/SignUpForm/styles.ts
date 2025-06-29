@@ -65,7 +65,7 @@ export const StrengthWrapper = styled.div`
   width: 100%;
   min-width: 200px;
   height: 0.5rem;
-  background: #d1d5db;
+  background: ${({ theme }: { theme: DefaultTheme }) => theme.colors.lightGray};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.radius.small};
   margin-top: 0.25rem;
 `;
@@ -75,6 +75,10 @@ export const StrengthBar = styled.div<{ strength: number }>`
   width: ${({ strength }) => `${(strength / 5) * 100}%`};
   border-radius: inherit;
   transition: width 0.3s ease;
-  background-color: ${({ strength }) =>
-    strength <= 2 ? '#ef4444' : strength === 3 ? '#facc15' : '#22c55e'};
+  background-color: ${({ strength, theme }) =>
+    strength <= 2
+      ? theme.colors.dangerColor
+      : strength === 3
+        ? theme.colors.yellow
+        : theme.colors.successfulGreen};
 `;
