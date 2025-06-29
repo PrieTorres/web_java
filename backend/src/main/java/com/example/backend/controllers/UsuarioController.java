@@ -145,6 +145,8 @@ public class UsuarioController {
             data = new HashMap<>();
         }
         data.put("id", doc.getId());
+        String token = tokenService.createSession(doc.getId());
+        data.put("token", token);
         return ResponseEntity.ok(data);
     }
 
@@ -162,6 +164,8 @@ public class UsuarioController {
                 existingData = new HashMap<>();
             }
             existingData.put("id", doc.getId());
+            String token = tokenService.createSession(doc.getId());
+            existingData.put("token", token);
             return ResponseEntity.ok(existingData);
         }
 
@@ -172,6 +176,8 @@ public class UsuarioController {
         DocumentReference newDoc = db.collection("usuarios").document();
         newDoc.set(userData);
         userData.put("id", newDoc.getId());
+        String token = tokenService.createSession(newDoc.getId());
+        userData.put("token", token);
         return ResponseEntity.status(HttpStatus.CREATED).body(userData);
     }
 }
