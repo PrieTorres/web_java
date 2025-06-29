@@ -4,7 +4,9 @@ import { ChangeEvent, FormEvent, KeyboardEvent, useContext, useState, useEffect 
 import { PageContext } from "@/context/PageContext";
 import { fetchTk } from "@/lib/helper";
 import { Container } from "./styles";
-import { TagChip } from "../TagChip";
+import ImageInput from "../PetFormParts/ImageInput";
+import TagInputList from "../PetFormParts/TagInputList";
+import ContactInputs from "../PetFormParts/ContactInputs";
 import { storage, auth } from "@/lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { signInAnonymously } from "firebase/auth";
@@ -305,29 +307,14 @@ export default function AddPetForm() {
                 </option>
               ))}
             </select>
-            <input type="file" name="imagem" onChange={handleImageChange} className="input" />
-            {imagePreview && (
-              <div className="image-wrapper">
-                <img src={imagePreview} alt="Pré-visualização" className="preview" />
-              </div>
-            )}
-            <div className="tag-input-wrapper">
-              <input
-                name="tags"
-                placeholder="Digite e pressione , ou Enter"
-                value={tagInput}
-                onChange={handleTagInput}
-                onKeyDown={handleTagKeyDown}
-                className="input"
-              />
-              {form.tags.length > 0 && (
-                <div className="tags">
-                  {form.tags.map((t) => (
-                    <TagChip key={t} label={t} onRemove={() => removeTag(t)} />
-                  ))}
-                </div>
-              )}
-            </div>
+            <ImageInput preview={imagePreview} onChange={handleImageChange} />
+            <TagInputList
+              tags={form.tags}
+              tagInput={tagInput}
+              onInputChange={handleTagInput}
+              onInputKeyDown={handleTagKeyDown}
+              onRemove={removeTag}
+            />
             <button type="button" onClick={() => setStep(2)} className="nav">
               Próximo
             </button>
@@ -391,22 +378,10 @@ export default function AddPetForm() {
           required
           className="input"
         />
-        <input
-          name="email"
-          placeholder="Email"
-          type="email"
-          value={form.email}
+        <ContactInputs
+          email={form.email}
+          telefone={form.telefone}
           onChange={handleChange}
-          required
-          className="input"
-        />
-        <input
-          name="telefone"
-          placeholder="Telefone"
-          value={form.telefone}
-          onChange={handleChange}
-          required
-          className="input"
         />
         <input
           name="latitude"

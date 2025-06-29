@@ -1,11 +1,13 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, KeyboardEvent, useState } from "react";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { signInAnonymously } from "firebase/auth";
 import { fetchTk } from "@/lib/helper";
 import { Container } from "./styles";
-import { TagChip } from "../TagChip";
+import ImageInput from "../PetFormParts/ImageInput";
+import TagInputList from "../PetFormParts/TagInputList";
+import ContactInputs from "../PetFormParts/ContactInputs";
 import { storage, auth } from "@/lib/firebase";
 
 export interface EditPetFormProps {
@@ -62,6 +64,17 @@ export default function EditPetForm({ pet, token, onSuccess }: EditPetFormProps)
       setTagInput("");
     } else {
       setTagInput(value);
+    }
+  };
+
+  const handleTagKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const tag = tagInput.trim();
+      if (tag && !form.tags.includes(tag)) {
+        setForm((prev: any) => ({ ...prev, tags: [...prev.tags, tag] }));
+      }
+      setTagInput("");
     }
   };
 
@@ -129,36 +142,21 @@ export default function EditPetForm({ pet, token, onSuccess }: EditPetFormProps)
         <input name="nome" className="input" value={form.nome} onChange={handleChange} />
         <textarea name="descricao" className="input" value={form.descricao} onChange={handleChange} />
         <input name="tipo" className="input" value={form.tipo} onChange={handleChange} />
-        <input type="file" name="imagem" onChange={handleImageChange} className="input" />
-        {imagePreview && (
-          <div className="image-wrapper">
-            <img src={imagePreview} alt="Pré-visualização" className="preview" />
-          </div>
-        )}
-        <div className="tag-input-wrapper">
-          <input
-            name="tags"
-            placeholder="Digite e pressione ,"
-            value={tagInput}
-            onChange={handleTagInput}
-            className="input"
-          />
-          {form.tags.length > 0 && (
-            <div className="tags">
-              {form.tags.map((t: string) => (
-                <TagChip key={t} label={t} onRemove={() => removeTag(t)} />
-              ))}
-            </div>
-          )}
-        </div>
+        <ImageInput preview={imagePreview} onChange={handleImageChange} />
+        <TagInputList
+          tags={form.tags}
+          tagInput={tagInput}
+          onInputChange={handleTagInput}
+          onInputKeyDown={handleTagKeyDown}
+          onRemove={removeTag}
+        />
         <input name="localizacao.pais" className="input" placeholder="País" value={form.localizacao.pais} onChange={handleChange} />
         <input name="localizacao.estado" className="input" placeholder="Estado" value={form.localizacao.estado} onChange={handleChange} />
         <input name="localizacao.cidade" className="input" placeholder="Cidade" value={form.localizacao.cidade} onChange={handleChange} />
         <input name="localizacao.bairro" className="input" placeholder="Bairro" value={form.localizacao.bairro} onChange={handleChange} />
         <input name="localizacao.rua" className="input" placeholder="Rua" value={form.localizacao.rua} onChange={handleChange} />
         <input name="localizacao.numero" className="input" placeholder="Número" value={form.localizacao.numero} onChange={handleChange} />
-        <input name="email" className="input" placeholder="Email" type="email" value={form.email} onChange={handleChange} />
-        <input name="telefone" className="input" placeholder="Telefone" value={form.telefone} onChange={handleChange} />
+        <ContactInputs email={form.email} telefone={form.telefone} onChange={handleChange} />
         <input name="localizacao.cep" className="input" placeholder="CEP" value={form.localizacao.cep} onChange={handleChange} />
         <button type="submit" className="submit">Salvar</button>
       </form>
