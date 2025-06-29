@@ -1,4 +1,3 @@
-import Image from "next/image";
 import google from "../../assets/google.svg";
 import { SafeImage } from "../SafeImage";
 import styled, { useTheme } from "styled-components";

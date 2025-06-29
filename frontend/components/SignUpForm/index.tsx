@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import { PageContext } from "@/context/PageContext";
 import { getUserByFirebaseUserId } from "@/lib/helper";
 import { LoadingSpin } from "@/components/LoadingSpin";
-import { signInWithGoogle, auth, getRedirectedUser } from "@/lib/firebase";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { signInWithGoogle, getRedirectedUser } from "@/lib/firebase";
 import googleImage from "@/public/assets/google.svg";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,7 +17,6 @@ export const SignUpForm = () => {
   const [loading, setLoading] = useState(false);
   const [strength, setStrength] = useState(0);
   const { updateSessionId, handleLogin, updateToken, updateUser } = useContext(PageContext);
-  const [user] = useAuthState(auth);
   const router = useRouter();
 
   useEffect(() => {

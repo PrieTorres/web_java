@@ -1,7 +1,7 @@
 import styled, { DefaultTheme, css } from 'styled-components';
 
 export const Wrapper = styled.div`
-  ${({ theme }: { theme: DefaultTheme }) => css`
+  ${() => css`
     position: relative;
     width: 100%;
   `}
