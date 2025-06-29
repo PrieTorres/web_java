@@ -8,7 +8,7 @@ export const MainLogo = (): ReactElement => {
     <Container>
       <ActiveLink href="/" target="_self">
         <SafeImage
-          src="/public/assets/img/pets_icon.png"
+          src="/assets/img/pets_icon.png"
           alt="Logo do site Adote um animalzinho"
           width={50}
           height={50}
