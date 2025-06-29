@@ -1,6 +1,7 @@
 package com.example.backend.controllers;
 
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -79,7 +80,7 @@ class PetControllerTest {
         loc.setLongitude(1);
         pet.setLocalizacao(loc);
         when(tokenService.getUserId("good")).thenReturn("uid1");
-        when(petService.addPet(pet)).thenReturn("pid1");
+        when(petService.addPet(any(Pet.class))).thenReturn("pid1");
 
         mockMvc.perform(post("/api/pets")
                 .header("Authorization", "good")
