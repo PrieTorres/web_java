@@ -15,11 +15,7 @@ export const Menu = () => {
     {
       children: "pets para adoção",
       link: "/allPets",
-    },
-    {
-      children: "meus pets",
-      link: "/myPets",
-    },
+    }
   ];
 
   return (

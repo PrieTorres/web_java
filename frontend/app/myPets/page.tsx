@@ -22,7 +22,11 @@ export default function MyPetsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token) {
+      console.error("No token found, redirecting to login");
+      window.location.href = "/login";
+      return;
+    };
     fetchTk("/api/pets/me", { headers: { Authorization: token } })
       .then((res) => res.json())
       .then((data) => setPets(data))
