@@ -14,7 +14,7 @@ export const Header = (): ReactElement => {
   return (
       <Container className='flex '>
         <MainLogo />
-        <div className="max-sm:hidden">
+        <div className="hidden sm:block">
           <Menu />
         </div>
         <div className='text-[1.5rem] flex gap-4 '>
@@ -23,7 +23,7 @@ export const Header = (): ReactElement => {
             {isLight ? "Dark 🌑" : "Light ☀"}
           </button>
         </div>
-        <div className="hidden max-sm:block" style={{ width: "100%" }}>
+        <div className="block sm:hidden" style={{ width: "100%" }}>
           <Menu />
         </div>
 
