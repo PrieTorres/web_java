@@ -13,6 +13,7 @@ interface Pet {
   tipo?: string;
   tags?: string[];
   imagem?: string;
+  imagens?: string[];
   localizacao?: Coordinates;
 }
 

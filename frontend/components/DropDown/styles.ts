@@ -14,12 +14,18 @@ export const Container = styled.div<ContainerProps>`
     padding: 0px ${theme.spacings.small};
     display: flex;
     align-items: center;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    margin: 0px 5px;
+    box-shadow: 0px 0px 8px 0px #000000d8 inset;
 
     & button {
       display: flex;
       gap: 4px;
       width: 100%;
       justify-content: space-between;
+      border: none;
+      background: inherit;
     }
 
     & button,
@@ -28,6 +34,12 @@ export const Container = styled.div<ContainerProps>`
       width: 100%;
       background: inherit;
       text-align: left;
+    }
+
+    & ul,
+    & li,
+    & ol {
+      list-style: none;
     }
 
     & ul {

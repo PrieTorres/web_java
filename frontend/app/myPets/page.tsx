@@ -14,6 +14,7 @@ interface Pet {
   tipo?: string;
   tags?: string[];
   imagem?: string;
+  imagens?: string[];
 }
 
 export default function MyPetsPage() {
@@ -29,7 +30,14 @@ export default function MyPetsPage() {
     };
     fetchTk("/api/pets/me", { headers: { Authorization: token } })
       .then((res) => res.json())
-      .then((data) => setPets(data))
+      .then((data) => {
+        if(!Array.isArray(data)) {
+          console.error("Invalid response format", data);
+          return;
+        } else {
+          setPets(data);
+        }
+      })
       .catch((err) => console.error("fetch my pets", err))
       .finally(() => setLoading(false));
   }, [token]);
@@ -39,9 +47,14 @@ export default function MyPetsPage() {
       {loading ? (
         <LoadingSection />
       ) : (
+        pets.length === 0 ? (
+          <p>Nenhum pet encontrado.</p>
+        ) :
         pets.map((pet) => (
           <div key={pet.id}>
-            <PetCard pet={pet} />
+            <Link href={`/pet/${pet.id}`}>
+              <PetCard pet={pet} />
+            </Link>
             <Link href={`/editPet/${pet.id}`}>Editar</Link>
           </div>
         ))
