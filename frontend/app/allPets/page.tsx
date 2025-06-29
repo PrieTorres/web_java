@@ -31,7 +31,7 @@ export default function AllPetsPage() {
       {loading ? (
         <LoadingSection />
       ) : (
-        pets.map((pet) => <PetCard key={pet.id} pet={pet} />)
+        pets.map((pet, i) => <div key={pet.id ?? i}><PetCard pet={pet} /></div>)
       )}
     </Section>
   );

@@ -1,9 +1,10 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useContext, useState, useEffect } from "react";
+import { ChangeEvent, FormEvent, KeyboardEvent, useContext, useState, useEffect } from "react";
 import { PageContext } from "@/context/PageContext";
 import { fetchTk } from "@/lib/helper";
 import { Container } from "./styles";
+import { TagChip } from "../TagChip";
 import { storage, auth } from "@/lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { signInAnonymously } from "firebase/auth";
@@ -37,7 +38,7 @@ type FormState = {
   nome: string;
   descricao: string;
   tipo: string;
-  tags: string;
+  tags: string[];
   pais: string;
   estado: string;
   cidade: string;
@@ -56,7 +57,7 @@ export default function AddPetForm() {
     nome: "",
     descricao: "",
     tipo: "",
-    tags: "",
+    tags: [],
     pais: "",
     estado: "",
     cidade: "",
@@ -69,6 +70,8 @@ export default function AddPetForm() {
     imagem: null,
   });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [tagInput, setTagInput] = useState("");
+  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
@@ -78,6 +81,36 @@ export default function AddPetForm() {
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleTagInput = (
+    e: ChangeEvent<HTMLInputElement>
+  ) => {
+    const { value } = e.target;
+    if (value.endsWith(',')) {
+      const tag = value.slice(0, -1).trim();
+      if (tag && !form.tags.includes(tag)) {
+        setForm((prev) => ({ ...prev, tags: [...prev.tags, tag] }));
+      }
+      setTagInput('');
+    } else {
+      setTagInput(value);
+    }
+  };
+
+  const handleTagKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const tag = tagInput.trim();
+      if (tag && !form.tags.includes(tag)) {
+        setForm((prev) => ({ ...prev, tags: [...prev.tags, tag] }));
+      }
+      setTagInput('');
+    }
+  };
+
+  const removeTag = (tag: string) => {
+    setForm((prev) => ({ ...prev, tags: prev.tags.filter((t) => t !== tag) }));
   };
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -173,10 +206,7 @@ export default function AddPetForm() {
       nome: form.nome,
       descricao: form.descricao,
       tipo: form.tipo,
-      tags: form.tags
-        .split(",")
-        .map((t) => t.trim())
-        .filter((t) => t),
+      tags: form.tags,
       localizacao: {
         pais: form.pais,
         estado: form.estado,
@@ -208,7 +238,7 @@ export default function AddPetForm() {
           nome: "",
           descricao: "",
           tipo: "",
-          tags: "",
+          tags: [],
           pais: "",
           estado: "",
           cidade: "",
@@ -220,6 +250,8 @@ export default function AddPetForm() {
           longitude: "",
           imagem: null,
         });
+        setTagInput("");
+        setStep(1);
         setImagePreview(null);
       }
     } catch (err) {
@@ -233,119 +265,148 @@ export default function AddPetForm() {
   return (
     <Container>
       <form onSubmit={handleSubmit}>
-        <input
-          name="nome"
-          placeholder="Nome"
-          value={form.nome}
-          onChange={handleChange}
-          required
-          className="input"
-        />
-        <textarea
-          name="descricao"
-          placeholder="Descrição"
-          value={form.descricao}
-          onChange={handleChange}
-          className="input"
-        />
-        <select
-          name="tipo"
-          value={form.tipo}
-          onChange={handleChange}
-          className="input"
-        >
-          <option value="">Selecione o tipo</option>
-          {tiposDeAnimais.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
-        </select>
-        <input type="file" name="imagem" onChange={handleImageChange} className="input" />
-        {imagePreview && (
-          <img src={imagePreview} alt="Pré-visualização" style={{ maxWidth: "100%", maxHeight: 200 }} />
-        )}
-        <input
-          name="tags"
-          placeholder="Tags (separadas por vírgula)"
-          value={form.tags}
-          onChange={handleChange}
-          className="input"
-        />
-        <input
-          name="cep"
-          placeholder="CEP"
-          value={form.cep}
-          onChange={handleCepChange}
-          required
-          className="input"
-        />
-        <input
-          name="pais"
-          placeholder="País"
-          value={form.pais}
-          onChange={handleChange}
-          required
-          className="input"
-        />
-        <input
-          name="estado"
-          placeholder="Estado"
-          value={form.estado}
-          onChange={handleChange}
-          required
-          className="input"
-        />
-        <input
-          name="cidade"
-          placeholder="Cidade"
-          value={form.cidade}
-          onChange={handleChange}
-          required
-          className="input"
-        />
-        <input
-          name="bairro"
-          placeholder="Bairro"
-          value={form.bairro}
-          onChange={handleChange}
-          required
-          className="input"
-        />
-        <input
-          name="rua"
-          placeholder="Rua"
-          value={form.rua}
-          onChange={handleChange}
-          required
-          className="input"
-        />
-        <input
-          name="numero"
-          placeholder="Número"
-          value={form.numero}
-          onChange={handleChange}
-          required
-          className="input"
-        />
-        <input
-          name="latitude"
-          placeholder="Latitude"
-          value={form.latitude}
-          readOnly
-          className="input"
-        />
-        <input
-          name="longitude"
-          placeholder="Longitude"
-          value={form.longitude}
-          readOnly
-          className="input"
-        />
+        <h1>Adicionar Pet</h1>
         {error && <p className="danger-text">{error}</p>}
-        <button type="submit" className="submit" disabled={loading}>
-          {loading ? <LoadingSpin /> : "Cadastrar"}
-        </button>
+        {step === 1 && (
+          <>
+            <input
+              name="nome"
+              placeholder="Nome"
+              value={form.nome}
+              onChange={handleChange}
+              required
+              className="input"
+            />
+            <textarea
+              name="descricao"
+              placeholder="Descrição"
+              value={form.descricao}
+              onChange={handleChange}
+              className="input"
+            />
+            <select
+              name="tipo"
+              value={form.tipo}
+              onChange={handleChange}
+              className="input"
+            >
+              <option value="">Selecione o tipo</option>
+              {tiposDeAnimais.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+            <input type="file" name="imagem" onChange={handleImageChange} className="input" />
+            {imagePreview && (
+              <div className="image-wrapper">
+                <img src={imagePreview} alt="Pré-visualização" className="preview" />
+              </div>
+            )}
+            <div className="tag-input-wrapper">
+              <input
+                name="tags"
+                placeholder="Digite e pressione , ou Enter"
+                value={tagInput}
+                onChange={handleTagInput}
+                onKeyDown={handleTagKeyDown}
+                className="input"
+              />
+              {form.tags.length > 0 && (
+                <div className="tags">
+                  {form.tags.map((t) => (
+                    <TagChip key={t} label={t} onRemove={() => removeTag(t)} />
+                  ))}
+                </div>
+              )}
+            </div>
+            <button type="button" onClick={() => setStep(2)} className="nav">
+              Próximo
+            </button>
+          </>
+        )}
+        {step === 2 && (
+          <>
+            <input
+              name="cep"
+              placeholder="CEP"
+              value={form.cep}
+              onChange={handleCepChange}
+              required
+              className="input"
+            />
+            <input
+              name="pais"
+              placeholder="País"
+              value={form.pais}
+              onChange={handleChange}
+              required
+              className="input"
+            />
+            <input
+              name="estado"
+              placeholder="Estado"
+              value={form.estado}
+              onChange={handleChange}
+              required
+              className="input"
+            />
+            <input
+              name="cidade"
+              placeholder="Cidade"
+              value={form.cidade}
+              onChange={handleChange}
+              required
+              className="input"
+            />
+            <input
+              name="bairro"
+              placeholder="Bairro"
+              value={form.bairro}
+              onChange={handleChange}
+              required
+              className="input"
+            />
+            <input
+              name="rua"
+              placeholder="Rua"
+              value={form.rua}
+              onChange={handleChange}
+              required
+              className="input"
+            />
+            <input
+              name="numero"
+              placeholder="Número"
+              value={form.numero}
+              onChange={handleChange}
+              required
+              className="input"
+            />
+            <input
+              name="latitude"
+              placeholder="Latitude"
+              value={form.latitude}
+              readOnly
+              className="input"
+            />
+            <input
+              name="longitude"
+              placeholder="Longitude"
+              value={form.longitude}
+              readOnly
+              className="input"
+            />
+            <div className="actions">
+              <button type="button" onClick={() => setStep(1)} className="nav">
+                Voltar
+              </button>
+              <button type="submit" className="submit">
+                {loading ? <LoadingSpin /> : "Cadastrar"}
+              </button>
+            </div>
+          </>
+        )}
       </form>
     </Container>
   );

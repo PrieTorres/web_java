@@ -1,6 +1,5 @@
 "use client";
 import { createContext, ReactElement, ReactNode, useContext, useEffect, useState } from 'react';
-import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "styled-components";
 import { theme, themeLight } from "@/styles/theme";
 import { GlobalStyles } from "@/styles/globalStyles";
@@ -24,7 +23,7 @@ export const useThemeContext = () => {
   return context;
 };
 
-export const Provider = ({ children, session }: { children: ReactNode, session?: never; }): ReactElement => {
+export const Provider = ({ children }: { children: ReactNode }): ReactElement => {
   useI18n();
   // const [mounted, setMounted] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<DefaultTheme>(theme);
@@ -51,17 +50,15 @@ export const Provider = ({ children, session }: { children: ReactNode, session?:
   };
 
   return (
-    <SessionProvider session={session}>
-      <StyledComponentsRegistry>
-        <ThemeContext.Provider value={{ isLight, changeTheme }}>
-          <ThemeProvider theme={currentTheme}>
-            <GlobalStyles />
-            <PageProvider>
-              {children}
-            </PageProvider>
-          </ThemeProvider>
-        </ThemeContext.Provider>
-      </StyledComponentsRegistry>
-    </SessionProvider>
+    <StyledComponentsRegistry>
+      <ThemeContext.Provider value={{ isLight, changeTheme }}>
+        <ThemeProvider theme={currentTheme}>
+          <GlobalStyles />
+          <PageProvider>
+            {children}
+          </PageProvider>
+        </ThemeProvider>
+      </ThemeContext.Provider>
+    </StyledComponentsRegistry>
   );
 };
