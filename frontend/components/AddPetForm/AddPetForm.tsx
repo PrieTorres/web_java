@@ -4,8 +4,9 @@ import { ChangeEvent, FormEvent, useContext, useState, useEffect } from "react";
 import { PageContext } from "@/context/PageContext";
 import { fetchTk } from "@/lib/helper";
 import { Container } from "./styles";
-import { storage } from "@/lib/firebase";
+import { storage, auth } from "@/lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { signInAnonymously } from "firebase/auth";
 
 const tiposDeAnimais = [
   "Cachorro",
@@ -147,6 +148,13 @@ export default function AddPetForm() {
       if (form.imagem.size > MAX_FILE_SIZE) {
         alert("Imagem excede o limite de 100MB.");
         return;
+      }
+      if (!auth.currentUser) {
+        try {
+          await signInAnonymously(auth);
+        } catch (err) {
+          console.error("Firebase anonymous sign-in failed", err);
+        }
       }
       const storageRef = ref(
         storage,
