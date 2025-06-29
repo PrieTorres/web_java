@@ -4,6 +4,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { fetchTk } from "@/lib/helper";
 import { Container } from "./styles";
 import { TagChip } from "../TagChip";
+import { useAlert } from "@/context/AlertContext";
 
 export interface EditPetFormProps {
   pet: any;
@@ -12,6 +13,7 @@ export interface EditPetFormProps {
 }
 
 export default function EditPetForm({ pet, token, onSuccess }: EditPetFormProps) {
+  const { showAlert } = useAlert();
   const [form, setForm] = useState<any>({
     nome: pet.nome || "",
     descricao: pet.descricao || "",
@@ -69,11 +71,11 @@ export default function EditPetForm({ pet, token, onSuccess }: EditPetFormProps)
       body: JSON.stringify(form),
     });
     if (res.ok) {
-      alert("Pet atualizado com sucesso!");
+      showAlert("Pet atualizado com sucesso!", "success");
       if (onSuccess) onSuccess();
     } else {
       const text = await res.text();
-      alert("Erro ao atualizar pet: " + text);
+      showAlert("Erro ao atualizar pet: " + text, "error");
     }
   };
 
