@@ -45,13 +45,14 @@ export const DropDown = ({ children, dropDownId, toggleId, items, height, style 
   }, [isOpen, style]);
 
   return (
-    <Container height={height} ref={containerRef} style={style}>
+    <Container height={height} ref={containerRef} style={style}
+      onClick={toggle}
+    >
       <button
         id={dropDownId}
         data-dropdown-toggle={toggleId}
         data-dropdown-delay="500"
         className="text-center inline-flex items-center"
-        onClick={toggle}
       >
         {children} <IconSpan icon="arrow_drop_down" />
       </button>

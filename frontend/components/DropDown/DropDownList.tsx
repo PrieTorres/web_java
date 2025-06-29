@@ -16,16 +16,20 @@ export const DropDownList = ({ isOpen, offset, dropDownId, toggleId, items, togg
       <div
         style={{ ...style, position: 'absolute', borderRadius: '0 0 5px 5px' }}
         id={toggleId}
-        className={`flex flex-col ${transClass}`}
+        className={`flex flex-col ${transClass} dropdown-list`}
       >
         <ul aria-labelledby={dropDownId} style={{ listStyle: 'none' }}>
           {items.map((dropItem, i) => (
             <li
               key={`drop-item-${i}`}
-              style={{ height: offset?.clientHeight, cursor: 'pointer' }}
+              style={{ 
+                height: offset?.clientHeight, 
+                cursor: 'pointer', 
+              }}
             >
               <div
-                style={{ height: '100%' }}
+                style={{ height: '100%', display: 'flex',
+                alignItems: 'center', }}
                 onClick={(e) => {
                   dropItem.onClick(e);
                   toggleFunction();
