@@ -52,6 +52,12 @@ class PetControllerTest {
     @Test
     void testAdicionarPetUnauthorized() throws Exception {
         Pet pet = new Pet();
+        pet.setNome("Rex");
+        pet.setTipo("Cachorro");
+        Localizacao loc = new Localizacao();
+        loc.setLatitude(1);
+        loc.setLongitude(1);
+        pet.setLocalizacao(loc);
         when(tokenService.getUserId("bad")).thenReturn(null);
 
         mockMvc.perform(post("/api/pets")
@@ -66,7 +72,11 @@ class PetControllerTest {
     void testAdicionarPetSuccess() throws Exception {
         Pet pet = new Pet();
         pet.setNome("Rex");
-        pet.setLocalizacao(new com.example.backend.models.Localizacao());
+        pet.setTipo("Cachorro");
+        Localizacao loc = new Localizacao();
+        loc.setLatitude(1);
+        loc.setLongitude(1);
+        pet.setLocalizacao(loc);
         when(tokenService.getUserId("good")).thenReturn("uid1");
         when(petService.addPet(pet)).thenReturn("pid1");
 
