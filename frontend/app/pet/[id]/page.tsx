@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Section } from "@/components/Section";
 import { LoadingSection } from "@/components/LoadingSection";
 import { SafeImage } from "@/components/SafeImage";
+import { Carousel } from "@/components/Carousel";
 import { TagChip } from "@/components/TagChip";
 import { fetchTk } from "@/lib/helper";
 import * as Styled from "./styles";
@@ -15,6 +16,7 @@ type Pet = {
   tipo?: string;
   tags?: string[];
   imagem?: string;
+  imagens?: string[];
   localizacao?: Record<string, any>;
   email?: string;
   telefone?: string;
@@ -35,19 +37,31 @@ export default function PetPage({ params }: { params: { id: string } }) {
 
   if (loading) return <LoadingSection />;
   if (!pet) return <Section>Pet não encontrado</Section>;
+  const imagens = pet.imagens && pet.imagens.length > 0
+    ? pet.imagens
+    : pet.imagem
+    ? [pet.imagem]
+    : [];
 
   return (
     <Section>
       <Styled.Container>
         <h1>{pet.nome}</h1>
-        <div className="image-wrapper">
-          <SafeImage
-            src={pet.imagem ?? "https://via.placeholder.com/300x200"}
-            text={pet.nome}
-            width={400}
-            height={300}
-          />
-        </div>
+        {imagens.length > 0 && (
+          <div className="image-wrapper">
+            <Carousel
+              items={imagens.map((src) => (
+                <SafeImage
+                  key={src}
+                  src={src}
+                  text={pet.nome}
+                  width={400}
+                  height={300}
+                />
+              ))}
+            />
+          </div>
+        )}
         {pet.tipo && <p>Tipo: {pet.tipo}</p>}
         {pet.descricao && <p>{pet.descricao}</p>}
         {pet.tags && pet.tags.length > 0 && (

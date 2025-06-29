@@ -2,17 +2,19 @@
 import { ChangeEvent } from "react";
 
 export interface ImageInputProps {
-  preview: string | null;
+  previews: string[];
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function ImageInput({ preview, onChange }: ImageInputProps) {
+export default function ImageInput({ previews, onChange }: ImageInputProps) {
   return (
     <>
-      <input type="file" name="imagem" onChange={onChange} className="input" />
-      {preview && (
+      <input type="file" name="imagens" onChange={onChange} multiple className="input" />
+      {previews.length > 0 && (
         <div className="image-wrapper">
-          <img src={preview} alt="Pré-visualização" className="preview" />
+          {previews.map((src, i) => (
+            <img key={i} src={src} alt="Pré-visualização" className="preview" />
+          ))}
         </div>
       )}
     </>

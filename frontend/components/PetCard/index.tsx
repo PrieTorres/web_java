@@ -10,17 +10,19 @@ export interface PetCardProps {
     tipo?: string;
     tags?: string[];
     imagem?: string;
+    imagens?: string[];
     matchTags?: string[];
     missingTags?: string[];
   };
 }
 
 export const PetCard = ({ pet }: PetCardProps) => {
+  const imgSrc = pet.imagens?.[0] ?? pet.imagem ?? "https://via.placeholder.com/300x200";
   return (
     <Styled.Container>
       <Styled.ImageWrapper>
         <SafeImage
-          src={pet.imagem ?? "https://via.placeholder.com/300x200"}
+          src={imgSrc}
           text={pet.nome}
           width={300}
           height={200}

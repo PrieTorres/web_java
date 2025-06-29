@@ -14,6 +14,7 @@ interface Pet {
   tipo?: string;
   tags?: string[];
   imagem?: string;
+  imagens?: string[];
 }
 
 export default function MyPetsPage() {

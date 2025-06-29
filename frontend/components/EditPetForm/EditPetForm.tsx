@@ -24,7 +24,7 @@ export default function EditPetForm({ pet, token, onSuccess }: EditPetFormProps)
     cep: pet.localizacao?.cep ?? "",
     latitude: String(pet.localizacao?.latitude ?? ""),
     longitude: String(pet.localizacao?.longitude ?? ""),
-    imagem: null,
+    imagens: [],
   };
   return (
     <PetForm
@@ -33,7 +33,7 @@ export default function EditPetForm({ pet, token, onSuccess }: EditPetFormProps)
       token={token}
       buttonLabel="Salvar"
       initialData={initial}
-      imageUrl={pet.imagem ?? null}
+      imageUrl={pet.imagens?.[0] ?? pet.imagem ?? null}
       onSuccess={onSuccess}
     />
   );
