@@ -59,10 +59,8 @@ public class PetController {
             pet.getNome() == null || 
             pet.getNome().isBlank() || 
             pet.getLocalizacao() == null || 
-            pet.getTipo().isBlank() ||
             pet.getTipo() == null ||
-            pet.getLocalizacao().getLatitude() == null || 
-            pet.getLocalizacao().getLongitude() == null
+            pet.getTipo().isBlank()
         ) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ApiError("Nome, tipo do animal, localização, latitude e longitude são obrigatórios."));

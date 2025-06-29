@@ -9,6 +9,7 @@ public class Pet {
     private List<String> tags;
     private Localizacao localizacao;
     private String userId;
+    private String imagem;
 
     public String getNome() {
         return nome;
@@ -51,5 +52,13 @@ public class Pet {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(String imagem) {
+        this.imagem = imagem;
     }
 }

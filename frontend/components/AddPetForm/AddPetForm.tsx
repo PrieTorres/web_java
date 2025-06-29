@@ -5,6 +5,10 @@ import { PageContext } from "@/context/PageContext";
 import { fetchTk } from "@/lib/helper";
 import { Container } from "./styles";
 import { TagChip } from "../TagChip";
+import { storage, auth } from "@/lib/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { signInAnonymously } from "firebase/auth";
+import { LoadingSpin } from "../LoadingSpin";
 
 const tiposDeAnimais = [
   "Cachorro",
@@ -68,6 +72,9 @@ export default function AddPetForm() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [tagInput, setTagInput] = useState("");
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -171,15 +178,29 @@ export default function AddPetForm() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
     await updateCoordinates();
-    let imagemBase64: string | undefined = undefined;
+    let imagemUrl: string | undefined = undefined;
     if (form.imagem) {
-      imagemBase64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result));
-        reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(form.imagem as Blob);
-      });
+      if (form.imagem.size > MAX_FILE_SIZE) {
+        alert("Imagem excede o limite de 100MB.");
+        setLoading(false);
+        return;
+      }
+      if (!auth.currentUser) {
+        try {
+          await signInAnonymously(auth);
+        } catch (err) {
+          console.error("Firebase anonymous sign-in failed", err);
+        }
+      }
+      const storageRef = ref(
+        storage,
+        `pets/${Date.now()}_${form.imagem.name}`
+      );
+      await uploadBytes(storageRef, form.imagem);
+      imagemUrl = await getDownloadURL(storageRef);
     }
     const petData = {
       nome: form.nome,
@@ -197,10 +218,10 @@ export default function AddPetForm() {
         latitude: Number(form.latitude),
         longitude: Number(form.longitude),
       },
-      imagem: imagemBase64,
+      imagem: imagemUrl,
     };
     try {
-      const res = await fetchTk("/api/pets/add", {
+      const res = await fetchTk("/api/pets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -210,7 +231,7 @@ export default function AddPetForm() {
       });
       if (!res.ok) {
         const text = await res.text();
-        alert("Erro ao cadastrar pet: " + text);
+        setError("Erro ao cadastrar pet: " + text);
       } else {
         alert("Pet cadastrado com sucesso!");
         setForm({
@@ -231,10 +252,13 @@ export default function AddPetForm() {
         });
         setTagInput("");
         setStep(1);
+        setImagePreview(null);
       }
     } catch (err) {
       console.error("handleSubmit", err);
-      alert("Erro ao cadastrar pet");
+      setError("Erro ao cadastrar pet");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -242,6 +266,7 @@ export default function AddPetForm() {
     <Container>
       <form onSubmit={handleSubmit}>
         <h1>Adicionar Pet</h1>
+        {error && <p className="danger-text">{error}</p>}
         {step === 1 && (
           <>
             <input
@@ -377,7 +402,7 @@ export default function AddPetForm() {
                 Voltar
               </button>
               <button type="submit" className="submit">
-                Cadastrar
+                {loading ? <LoadingSpin /> : "Cadastrar"}
               </button>
             </div>
           </>
