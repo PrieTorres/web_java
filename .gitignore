@@ -1,3 +1,7 @@
 firebase-service-account.json
 *.log
 .env
+.firebase
+node_modules
+dist
+.vscode
